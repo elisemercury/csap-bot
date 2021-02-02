@@ -1,1 +1,1 @@
-web: gunicorn csap-bot.wsgi
+web: gunicorn app:server
