@@ -6,6 +6,7 @@ import time
 import requests
 import os
 import psycopg2
+from urllib.parse import urlparse
 
 bot_app_name = "Alert Bot"
 bot_token= "MDk2MmRmYTEtOGQyZS00MjlhLThkMGMtNWYzNjNhNDJlYjE0NDY4MzVhNGUtNTM2_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
