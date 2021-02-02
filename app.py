@@ -159,6 +159,7 @@ def greeting(incoming_msg):
     return ""
 
 def handle_cards(api, incoming_msg):
+    fetch_infos(incoming_msg)
     m = get_attachment_actions(incoming_msg["data"]["id"])
     print(m)
     if m["inputs"] == "subscribe":
