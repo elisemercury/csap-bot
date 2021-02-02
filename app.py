@@ -160,8 +160,8 @@ def greeting(incoming_msg):
 
 def handle_cards(api, incoming_msg):
     print(incoming_msg)
-    room = bot.teams.rooms.get(incoming_msg.roomId)
-    roomId = str(room.id)
+    roomId = bot.teams.rooms.get(incoming_msg["data"]["roomId"])
+    #roomId = str(room.id)
     m = get_attachment_actions(incoming_msg["data"]["id"])
     print(m)
     if m["inputs"] == "subscribe":
