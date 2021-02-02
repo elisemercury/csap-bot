@@ -162,13 +162,14 @@ def handle_cards(api, incoming_msg):
     print(incoming_msg)
     roomId = bot.teams.rooms.get(incoming_msg["data"]["roomId"])
     #roomId = str(room.id)
+    print(roomId)
     m = get_attachment_actions(incoming_msg["data"]["id"])
     print(m)
     if m["inputs"] == "subscribe":
         with open(subscriber_db) as json_file:
             data = json.load(json_file)
         if roomId not in data["subscribers"]:
-            cur.execute("""INSERT INTO subscribers ('RoomId') (""" + roomId + """)""")
+            cur.execute("""INSERT INTO subscribers ('RoomId') (""" + str(roomId) + """)""")
             data["subscribers"].append(roomId)        
             with open(subscriber_db, 'w') as outfile:
                 json.dump(data, outfile)        
