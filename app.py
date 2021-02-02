@@ -180,7 +180,7 @@ def create_message_with_attachment(rid, msgtxt, attachment):
         "authorization": "Bearer " + bot_token,
     }
     
-    url = "https://api.ciscospark.com/v1/messages"
+    url = "https://webexapis.com/v1/messages"
     data = {"roomId": rid, "attachments": [attachment], "markdown": msgtxt}
     response = requests.post(url, json=data, headers=headers)
     return response.json()
@@ -191,7 +191,7 @@ def get_attachment_actions(attachmentid):
         "authorization": "Bearer " + bot_token,
     }
 
-    url = "https://api.ciscospark.com/v1/attachment/actions/" + attachmentid
+    url = "https://webexapis.com/v1/messages" + attachmentid
     response = requests.get(url, headers=headers)
     return response.json()
 
