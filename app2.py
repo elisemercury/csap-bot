@@ -30,7 +30,69 @@ def greeting(incoming_msg):
     sender = bot.teams.people.get(incoming_msg.personId)
     firstName = sender.firstName
     room = bot.teams.rooms.get(incoming_msg.roomId)
-    attachment = card_message ### card message
+    attachment = """
+    {"contentType": "application/vnd.microsoft.card.adaptive",
+     "content": {"type": "AdaptiveCard",
+                 "body": [{ "type": "ColumnSet",
+                            "columns": [{"type": "Column",
+                                         "width": 2,
+                                         "items": [{"type": "TextBlock",
+                                                    "text": "26 June 2020, Vienna, Austria"
+                                                    },
+                                                    {"type": "TextBlock",
+                                                     "text": "Notification",
+                                                     "weight": "Bolder",
+                                                     "size": "ExtraLarge",
+                                                     "spacing": "None"
+                                                    },
+                                                    {"type": "TextBlock",
+                                                     "text": "**ariba** said hello",
+                                                     "size": "Small",
+                                                     "wrap": true,
+                                                     "maxLines": 3
+                                                     }
+                                                    ]
+                                        },
+                                        {"type": "Column",
+                                         "width": 1,
+                                         "items": [{"type": "Image",
+                                                    "url": "https://i.pinimg.com/originals/54/68/bf/5468bf0cb6dcdeab64c17731dac360ae.gif",
+                                                    "size": "auto"
+                                                    }
+                                                  ]
+                                        }
+                                        ]},
+                            {"type": "Container",
+                            "items": [{"type": "TextBlock",
+                                       "text": "The order with number 1234567 has been booked. Please click below for more information on your order."
+                                    }
+                                    ]}],
+                "actions": [{"type": "Action.Submit",
+                             "title": "Mehr Info",
+                             "data": "Mehr Info",
+                             "style": "positive",
+                             "id": "button1"
+                            },
+                            {"type": "Action.Submit",
+                             "title": "URL Öffnen",
+                             "data": "unsubscribe",
+                             "style": "destructive",
+                             "id": "button2"
+                            },
+                            {"type": "Action.Submit",
+                             "title": "More Info",
+                             "data": "more info",
+                             "style": "destructive",
+                             "id": "button3" 
+                            }
+                            ],
+                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    "version": "1.2"
+                            }
+                            
+                
+    }
+    """
     backupmessage = "This is an example using Adaptive Cards."
 
     c = create_message_with_attachment(
