@@ -191,7 +191,7 @@ def get_attachment_actions(attachmentid):
         "authorization": "Bearer " + bot_token,
     }
 
-    url = "https://webexapis.com/v1/messages" + attachmentid
+    url = "https://webexapis.com/v1/attachment/actions" + attachmentid
     response = requests.get(url, headers=headers)
     return response.json()
 
