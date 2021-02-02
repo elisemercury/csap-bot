@@ -110,6 +110,8 @@ def handle_cards(api, incoming_msg):
     """
     
     m = get_attachment_actions(incoming_msg["data"]["id"])
+    print(m)
+    sender = bot.teams.people.get(incoming_msg.personId)
     for i in sender.emails:
         mail = str(i)
     roomId = str(room.id)

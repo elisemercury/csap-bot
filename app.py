@@ -152,16 +152,15 @@ def greeting(incoming_msg):
 
 def handle_cards(api, incoming_msg):
     m = get_attachment_actions(incoming_msg["data"]["id"])
-    
+    print(m)
     if m["inputs"] == "subscribe":
-        print(roomId)
         with open(subscriber_db) as json_file:
             data = json.load(json_file)
         if roomId not in data["subscribers"]:
             data["subscribers"].append(roomId)        
             with open(subscriber_db, 'w') as outfile:
                 json.dump(data, outfile)        
-        return "Thank you {}, you sucessfully subscribed to CSAP bot updates.".format(firstName)
+        return "Thank you, you sucessfully subscribed to CSAP bot updates."
             
     if m["inputs"] == "unsubscribe":    
         with open(subscriber_db) as json_file:
@@ -170,7 +169,7 @@ def handle_cards(api, incoming_msg):
             data["subscribers"].remove(roomId)        
             with open(subscriber_db, 'w') as outfile:
                 json.dump(data, outfile)     
-        return "Thank you {}, you sucessfully unsubscribed from CSAP bot updates.".format(firstName)   
+        return "Thank you, you sucessfully unsubscribed from CSAP bot updates."  
     
     return "Sorry {}, I do not understand the command {} yet.".format(firstName, m["inputs"])
 
