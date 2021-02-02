@@ -8,7 +8,7 @@ import os
 
 bot_app_name = "Alert Bot"
 bot_token= "MDk2MmRmYTEtOGQyZS00MjlhLThkMGMtNWYzNjNhNDJlYjE0NDY4MzVhNGUtNTM2_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
-bot_url= "http://9e674c567b55.ngrok.io"
+bot_url= "https://csap-bot.herokuapp.com/"
 bot_email = "alertsbot@webex.bot"
 subscriber_db = "subscribers.txt"
 
@@ -457,4 +457,4 @@ bot.remove_command("/echo")
 
 if __name__ == "__main__":
     # Run Bot
-    bot.run(host="127.0.0.1", port="80")
+    bot.run()
