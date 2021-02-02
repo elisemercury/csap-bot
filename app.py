@@ -160,6 +160,7 @@ def greeting(incoming_msg):
 
 def handle_cards(api, incoming_msg):
     room = bot.teams.rooms.get(incoming_msg.roomId)
+    print(incoming_msg)
     roomId = str(room.id)
     m = get_attachment_actions(incoming_msg["data"]["id"])
     print(m)
