@@ -169,7 +169,7 @@ def handle_cards(api, incoming_msg):
         with open(subscriber_db) as json_file:
             data = json.load(json_file)
         if roomId not in data["subscribers"]:
-            cur.execute("""INSERT INTO subscribers ('RoomId') (""" + str(roomId) + """)""")
+            cur.execute("INSERT INTO subscribers (RoomId) (%s)", (RoomId))
             data["subscribers"].append(roomId)        
             with open(subscriber_db, 'w') as outfile:
                 json.dump(data, outfile)        
