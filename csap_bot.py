@@ -7,10 +7,10 @@ import requests
 import os
 
 bot_app_name = "Alert Bot"
-bot_token= "MDU5MGRmZDYtOTY2MC00NTI0LThlNzgtMzM3MzgzNTdjNWJhZTAzNWIzNTUtZTYw_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
-bot_url= "http://53299cf3856b.ngrok.io"
+bot_token= "MDk2MmRmYTEtOGQyZS00MjlhLThkMGMtNWYzNjNhNDJlYjE0NDY4MzVhNGUtNTM2_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
+bot_url= "http://9e674c567b55.ngrok.io"
 bot_email = "alertsbot@webex.bot"
-subscriber_db = "TestPage Sharepoint/Wirtschaftsuniversität Wien - IT-SERVICES/TestPage - Documents/subscribers.txt"
+subscriber_db = "subscribers.txt"
 
 api = WebexTeamsAPI(bot_token)
 
@@ -25,9 +25,7 @@ def fetch_infos(incoming_msg):
     global sender, room, firstName, mail, roomId
     sender = bot.teams.people.get(incoming_msg.personId)
     firstName = sender.firstName
-    #room = bot.teams.rooms.get(incoming_msg.roomId)
-    room = bot.teams.rooms.get(incoming_msg.roomId) #.get(incoming_msg)
-    print(room)
+    room = bot.teams.rooms.get(incoming_msg.roomId)
     
     for i in sender.emails:
         mail = str(i)
@@ -36,120 +34,7 @@ def fetch_infos(incoming_msg):
 def greeting(incoming_msg):
     fetch_infos(incoming_msg)
     
-    attachment = greeting_card ### card message
-    backupmessage = "This is an example using Adaptive Cards."
-
-    c = create_message_with_attachment(
-        incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
-    )
-    return ""
-
-def handle_cards(api, incoming_msg):
-    """
-    Sample function to handle card actions.
-    :param api: webexteamssdk object
-    :param incoming_msg: The incoming message object from Teams
-    :return: A text or markdown based reply
-    """
-    fetch_infos(incoming_msg)
-    
-    m = get_attachment_actions(incoming_msg["data"]["id"])
-    
-    if m["inputs"] == "subscribe":
-        print(roomId)
-        with open(subscriber_db) as json_file:
-            data = json.load(json_file)
-        if roomId not in data["subscribers"]:
-            data["subscribers"].append(roomId)        
-            with open(subscriber_db, 'w') as outfile:
-                json.dump(data, outfile)        
-        return "Thank you {}, you sucessfully subscribed to CSAP bot updates.".format(firstName)
-            
-    if m["inputs"] == "unsubscribe":    
-        with open(subscriber_db) as json_file:
-            data = json.load(json_file)
-        if roomId in data["subscribers"]:
-            data["subscribers"].remove(roomId)        
-            with open(subscriber_db, 'w') as outfile:
-                json.dump(data, outfile)     
-        return "Thank you {}, you sucessfully unsubscribed from CSAP bot updates.".format(firstName)   
-    
-    return "Sorry {}, I do not understand the command {} yet.".format(firstName, m["inputs"])
-
-
-def create_message_with_attachment(rid, msgtxt, attachment):
-    headers = {
-        "content-type": "application/json; charset=utf-8",
-        "authorization": "Bearer " + bot_token,
-    }
-    
-    url = "https://api.ciscospark.com/v1/messages"
-    data = {"roomId": rid, "attachments": [attachment], "markdown": msgtxt}
-    response = requests.post(url, json=data, headers=headers)
-    return response.json()
-
-def get_attachment_actions(attachmentid):
-    headers = {
-        "content-type": "application/json; charset=utf-8",
-        "authorization": "Bearer " + bot_token,
-    }
-
-    url = "https://api.ciscospark.com/v1/attachment/actions/" + attachmentid
-    response = requests.get(url, headers=headers)
-    return response.json()
-
-def subscribe(incoming_msg):
-    fetch_infos(incoming_msg)
-    
-    with open(subscriber_db) as json_file:
-        data = json.load(json_file)
-    if roomId not in data["subscribers"]:
-        data["subscribers"].append(roomId)        
-        with open(subscriber_db, 'w') as outfile:
-            json.dump(data, outfile)        
-    return "Thank you {}, you sucessfully subscribed to CSAP bot updates.".format(firstName)
-
-def unsubscribe(incoming_msg):
-    fetch_infos(incoming_msg)
-    
-    if m["inputs"] == "unsubscribe":    
-        with open(subscriber_db) as json_file:
-            data = json.load(json_file)
-        if roomId in data["subscribers"]:
-            data["subscribers"].remove(roomId)        
-            with open(subscriber_db, 'w') as outfile:
-                json.dump(data, outfile)     
-        return "Thank you {}, you sucessfully unsubscribed from CSAP bot updates.".format(firstName)   
-    
-def help(incoming_msg):
-    fetch_infos(incoming_msg)
-    attachment = help_card ### card message
-    backupmessage = "This is an example using Adaptive Cards."
-
-    c = create_message_with_attachment(
-        incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
-    )    
-    
-    return ""
-
-def contact(incoming_msg):
-    return "Thank you {} for using the CSAP bot. \n Current version is v1.0. \n Please contact elandman@cisco.com for more information.".format(firstName)
-
-# Add new commands to the box.
-bot.set_greeting(greeting)
-bot.add_command("subscribe", "Subscribe to bot updates.", subscribe)
-bot.add_command("unsubscribe", "Unsubscribe from bot updates.", unsubscribe)
-bot.add_command("help", "Help", help)
-bot.add_command("contact", "Contact the team behind the CSAP bot.", contact)
-bot.add_command("attachmentActions", "*", handle_cards)
-
-bot.remove_command("/echo")
-
-if __name__ == "__main__":
-    # Run Bot
-    bot.run(host="127.0.0.1", port="80")
-
-greeting_card = """
+    attachment = """
     {
       "contentType": "application/vnd.microsoft.card.adaptive",
       "content": {
@@ -258,7 +143,84 @@ greeting_card = """
     }
   """
 
-help_card = """
+    backupmessage = "This is an example using Adaptive Cards."
+
+    c = create_message_with_attachment(
+        incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
+    )
+    return ""
+
+def handle_cards(api, incoming_msg):
+    m = get_attachment_actions(incoming_msg["data"]["id"])
+    
+    if m["inputs"] == "subscribe":
+        print(roomId)
+        with open(subscriber_db) as json_file:
+            data = json.load(json_file)
+        if roomId not in data["subscribers"]:
+            data["subscribers"].append(roomId)        
+            with open(subscriber_db, 'w') as outfile:
+                json.dump(data, outfile)        
+        return "Thank you {}, you sucessfully subscribed to CSAP bot updates.".format(firstName)
+            
+    if m["inputs"] == "unsubscribe":    
+        with open(subscriber_db) as json_file:
+            data = json.load(json_file)
+        if roomId in data["subscribers"]:
+            data["subscribers"].remove(roomId)        
+            with open(subscriber_db, 'w') as outfile:
+                json.dump(data, outfile)     
+        return "Thank you {}, you sucessfully unsubscribed from CSAP bot updates.".format(firstName)   
+    
+    return "Sorry {}, I do not understand the command {} yet.".format(firstName, m["inputs"])
+
+def create_message_with_attachment(rid, msgtxt, attachment):
+    headers = {
+        "content-type": "application/json; charset=utf-8",
+        "authorization": "Bearer " + bot_token,
+    }
+    
+    url = "https://api.ciscospark.com/v1/messages"
+    data = {"roomId": rid, "attachments": [attachment], "markdown": msgtxt}
+    response = requests.post(url, json=data, headers=headers)
+    return response.json()
+
+def get_attachment_actions(attachmentid):
+    headers = {
+        "content-type": "application/json; charset=utf-8",
+        "authorization": "Bearer " + bot_token,
+    }
+
+    url = "https://api.ciscospark.com/v1/attachment/actions/" + attachmentid
+    response = requests.get(url, headers=headers)
+    return response.json()
+
+def subscribe(incoming_msg):
+    fetch_infos(incoming_msg)
+    
+    with open(subscriber_db) as json_file:
+        data = json.load(json_file)
+    if roomId not in data["subscribers"]:
+        data["subscribers"].append(roomId)        
+        with open(subscriber_db, 'w') as outfile:
+            json.dump(data, outfile)        
+    return "Thank you {}, you sucessfully subscribed to CSAP bot updates.".format(firstName)
+
+def unsubscribe(incoming_msg):
+    fetch_infos(incoming_msg)
+    
+    if m["inputs"] == "unsubscribe":    
+        with open(subscriber_db) as json_file:
+            data = json.load(json_file)
+        if roomId in data["subscribers"]:
+            data["subscribers"].remove(roomId)        
+            with open(subscriber_db, 'w') as outfile:
+                json.dump(data, outfile)     
+        return "Thank you {}, you sucessfully unsubscribed from CSAP bot updates.".format(firstName)   
+    
+def help(incoming_msg):
+    fetch_infos(incoming_msg)
+    attachment = """
     {
       "contentType": "application/vnd.microsoft.card.adaptive",
       "content": {
@@ -472,3 +434,27 @@ help_card = """
 }
     }
   """
+    backupmessage = "This is an example using Adaptive Cards."
+
+    c = create_message_with_attachment(
+        incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
+    )    
+    
+    return ""
+
+def contact(incoming_msg):
+    return "Thank you {} for using the CSAP bot. \n Current version is v1.0. \n Please contact elandman@cisco.com for more information.".format(firstName)
+
+# Add new commands to the box.
+bot.set_greeting(greeting)
+bot.add_command("subscribe", "Subscribe to bot updates.", subscribe)
+bot.add_command("unsubscribe", "Unsubscribe from bot updates.", unsubscribe)
+bot.add_command("help", "Help", help)
+bot.add_command("contact", "Contact the team behind the CSAP bot.", contact)
+bot.add_command("attachmentActions", "*", handle_cards)
+
+bot.remove_command("/echo")
+
+if __name__ == "__main__":
+    # Run Bot
+    bot.run(host="127.0.0.1", port="80")
