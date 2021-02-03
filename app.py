@@ -9,7 +9,7 @@ import psycopg2
 from urllib.parse import urlparse
 
 bot_app_name = "Alert Bot"
-bot_token= "NDk1MTQ1ZmEtMTg5ZS00NmZlLWExMjQtNTM4OTEyYjA1ZmYzMjBhMWRiMWYtM2E4_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
+bot_token= "MDk2MmRmYTEtOGQyZS00MjlhLThkMGMtNWYzNjNhNDJlYjE0NDY4MzVhNGUtNTM2_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
 bot_url= "https://csap-bot.herokuapp.com/"
 bot_email = "alertsbot@webex.bot"
 subscriber_db = "subscribers.txt"
@@ -152,10 +152,10 @@ def greeting(incoming_msg):
   """
 
     backupmessage = "This is an example using Adaptive Cards."
-    try:
-        c = create_message_with_attachment(
+
+    c = create_message_with_attachment(
         incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
-        )
+    )
     return ""
 
 def handle_cards(api, incoming_msg):
@@ -169,8 +169,7 @@ def handle_cards(api, incoming_msg):
         with open(subscriber_db) as json_file:
             data = json.load(json_file)
         if roomId not in data["subscribers"]:
-            #cur.execute("""INSERT INTO subscribers (RoomId) VALUES (%s);""", (roomId,))
-
+            cur.execute("INSERT INTO subscribers (RoomId) (%s)", (RoomId))
             data["subscribers"].append(roomId)        
             with open(subscriber_db, 'w') as outfile:
                 json.dump(data, outfile)        
