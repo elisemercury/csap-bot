@@ -152,10 +152,10 @@ def greeting(incoming_msg):
   """
 
     backupmessage = "This is an example using Adaptive Cards."
-
-    c = create_message_with_attachment(
+    try:
+        c = create_message_with_attachment(
         incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
-    )
+        )
     return ""
 
 def handle_cards(api, incoming_msg):
@@ -169,7 +169,7 @@ def handle_cards(api, incoming_msg):
         with open(subscriber_db) as json_file:
             data = json.load(json_file)
         if roomId not in data["subscribers"]:
-            cur.execute("""INSERT INTO subscribers (RoomId) VALUES (%s);""", (roomId,))
+            #cur.execute("""INSERT INTO subscribers (RoomId) VALUES (%s);""", (roomId,))
 
             data["subscribers"].append(roomId)        
             with open(subscriber_db, 'w') as outfile:
