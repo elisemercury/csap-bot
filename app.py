@@ -169,13 +169,13 @@ def handle_cards(api, incoming_msg):
     roomId = bot.teams.rooms.get(incoming_msg["data"]["roomId"])
     
     if m["inputs"] == "subscribe":
-        with open(subscriber_db) as json_file:
-            data = json.load(json_file)
-        if roomId not in data["subscribers"]:
-            #cur.execute("INSERT INTO subscribers (RoomId) VALUES (%s)", (roomId))
-            data["subscribers"].append(roomId)        
-            with open(subscriber_db, 'w') as outfile:
-                json.dump(data, outfile)        
+        # with open(subscriber_db) as json_file:
+        #     data = json.load(json_file)
+        # if roomId not in data["subscribers"]:
+        #     #cur.execute("INSERT INTO subscribers (RoomId) VALUES (%s)", (roomId))
+        #     data["subscribers"].append(roomId)        
+        #     with open(subscriber_db, 'w') as outfile:
+        #         json.dump(data, outfile)        
         return "Thank you, you sucessfully subscribed to CSAP bot updates."
             
     if m["inputs"] == "unsubscribe":    
