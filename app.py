@@ -8,10 +8,10 @@ import os
 import psycopg2
 from urllib.parse import urlparse
 
-bot_app_name = "Alert Bot"
-bot_token= "MmQ0OTE2YTMtNzliYy00OTQxLWI0ZGYtYjUyMDgwYjY0OTU4MWIyYTI2ZDEtMDZk_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
+bot_app_name = "Time Recording Bot"
+bot_token= "N2Y5NTA3NmUtYjc4MC00ZGFhLWE4MjctNDgwOTc4ZjUwMzI2YjI4MDViZTUtOGNk_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
 bot_url= "https://csap-bot.herokuapp.com/"
-bot_email = "alertsbot@webex.bot"
+bot_email = "timerec@webex.bot"
 subscriber_db = "subscribers.txt"
 
 # url = urlparse(os.environ.get('DATABASE_URL'))
@@ -169,7 +169,7 @@ def handle_cards(api, incoming_msg):
         with open(subscriber_db) as json_file:
             data = json.load(json_file)
         if roomId not in data["subscribers"]:
-            #cur.execute("INSERT INTO subscribers (RoomId) (%s)", (RoomId))
+            #cur.execute("INSERT INTO subscribers (RoomId) VALUES (%s)", (roomId))
             data["subscribers"].append(roomId)        
             with open(subscriber_db, 'w') as outfile:
                 json.dump(data, outfile)        
