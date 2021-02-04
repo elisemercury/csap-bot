@@ -1,3 +1,5 @@
+# backup app which will turn into new app for debugging
+
 from webexteamssdk import WebexTeamsAPI
 from webexteamsbot import TeamsBot
 import urllib3
@@ -29,7 +31,8 @@ def greeting(incoming_msg):
     global sender, room
     sender = bot.teams.people.get(incoming_msg.personId)
     firstName = sender.firstName
-    room = bot.tea"""
+    room = bot.teams.rooms.get(incoming_msg.roomId)
+    attachment = """
     {
       "contentType": "application/vnd.microsoft.card.adaptive",
       "content": {
