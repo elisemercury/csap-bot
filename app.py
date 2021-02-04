@@ -159,12 +159,14 @@ def greeting(incoming_msg):
     return ""
 
 def handle_cards(api, incoming_msg):
-    print(incoming_msg)
+    m = get_attachment_actions(incoming_msg["data"]["id"])
+    print(m)
+    
     roomId = bot.teams.rooms.get(incoming_msg["data"]["roomId"])
     #roomId = str(room.id)
     print(roomId)
-    m = get_attachment_actions(incoming_msg["data"]["id"])
-    print(m)
+
+    
     if m["inputs"] == "subscribe":
         with open(subscriber_db) as json_file:
             data = json.load(json_file)
