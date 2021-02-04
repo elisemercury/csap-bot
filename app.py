@@ -9,16 +9,16 @@ import psycopg2
 from urllib.parse import urlparse
 
 bot_app_name = "Alert Bot"
-bot_token= "MDk2MmRmYTEtOGQyZS00MjlhLThkMGMtNWYzNjNhNDJlYjE0NDY4MzVhNGUtNTM2_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
+bot_token= "MmQ0OTE2YTMtNzliYy00OTQxLWI0ZGYtYjUyMDgwYjY0OTU4MWIyYTI2ZDEtMDZk_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
 bot_url= "https://csap-bot.herokuapp.com/"
 bot_email = "alertsbot@webex.bot"
 subscriber_db = "subscribers.txt"
 
-url = urlparse(os.environ.get('DATABASE_URL'))
-db = "dbname=%s user=%s password=%s host=%s " % (url.path[1:], url.username, url.password, url.hostname)
-schema = "schema.sql"
-conn = psycopg2.connect(db)
-cur = conn.cursor()
+# url = urlparse(os.environ.get('DATABASE_URL'))
+# db = "dbname=%s user=%s password=%s host=%s " % (url.path[1:], url.username, url.password, url.hostname)
+# schema = "schema.sql"
+# conn = psycopg2.connect(db)
+# cur = conn.cursor()
 
 api = WebexTeamsAPI(bot_token)
 
@@ -169,7 +169,7 @@ def handle_cards(api, incoming_msg):
         with open(subscriber_db) as json_file:
             data = json.load(json_file)
         if roomId not in data["subscribers"]:
-            cur.execute("INSERT INTO subscribers (RoomId) (%s)", (RoomId))
+            #cur.execute("INSERT INTO subscribers (RoomId) (%s)", (RoomId))
             data["subscribers"].append(roomId)        
             with open(subscriber_db, 'w') as outfile:
                 json.dump(data, outfile)        
