@@ -26,6 +26,12 @@ bot = TeamsBot(
     ]
 )
 
+url = urlparse(os.environ.get('DATABASE_URL'))
+db = "dbname=%s user=%s password=%s host=%s " % (url.path[1:], url.username, url.password, url.hostname)
+schema = "schema.sql"
+conn = psycopg2.connect(db)
+cur = conn.cursor()
+
 def greeting(incoming_msg):
     global sender, room
     sender = bot.teams.people.get(incoming_msg.personId)
@@ -161,28 +167,26 @@ def handle_cards(api, incoming_msg):
     roomId = bot.teams.rooms.get(incoming_msg["data"]["roomId"])
     
     if m["inputs"] == "subscribe":
-        with open(str(os.getcwd()) + "\\" + "subscribers.txt", "a") as f:
-            f.write(mail + "," + roomId + "\n")
+        with open(subscriber_db) as json_file:
+            data = json.load(json_file)
+        if roomId not in data["subscribers"]:
+            #cur.execute("INSERT INTO subscribers (RoomId) VALUES (%s)", (roomId))
+            data["subscribers"].append(roomId)        
+            with open(subscriber_db, 'w') as outfile:
+                json.dump(data, outfile)        
+        return "Thank you, you sucessfully subscribed to CSAP bot updates."
             
-    if m["inputs"] == "unsubscribe":            
-        with open(str(os.getcwd()) + "\\" + "subscribers.txt", "r") as f:
-            lines = f.readlines()
-        with open(str(os.getcwd()) + "\\" + "subscribers.txt", "w") as f:
-            for line in lines:
-                if line.strip("\n") != (mail + "," + roomId):
-                    f.write(line)
-                    
-        with open(str(os.getcwd()) + "\\" + "unsubscribers.txt", "a") as f:
-            f.write(mail + "," + roomId + "\n")
-        
-    if m["inputs"] == "more info":
-        attachment = card_message ### card message
-        backupmessage = "This is an example using Adaptive Cards."
+    if m["inputs"] == "unsubscribe":    
+        with open(subscriber_db) as json_file:
+            data = json.load(json_file)
+        if roomId in data["subscribers"]:
+            data["subscribers"].remove(roomId)        
+            with open(subscriber_db, 'w') as outfile:
+                json.dump(data, outfile)     
+        return "Thank you, you sucessfully unsubscribed from CSAP bot updates."  
+    
+    #return "Sorry {}, I do not understand the command {} yet.".format(firstName, m["inputs"])
 
-        c = create_message_with_attachment(
-            roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
-        )
-        return ""
     
     
     return "card action was - {}".format(m["inputs"])
