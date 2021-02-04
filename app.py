@@ -15,10 +15,11 @@ bot_url= "https://csap-bot.herokuapp.com/"
 bot_email = "timerec@webex.bot"
 subscriber_db = "subscribers.txt"
 
-for webhook in api.webhooks.list():
-    api.webhooks.delete(webhook.id)
 
 api = WebexTeamsAPI(bot_token)
+
+for webhook in api.webhooks.list():
+    api.webhooks.delete(webhook.id)
 
 bot = TeamsBot(
     bot_app_name,
