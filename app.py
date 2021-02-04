@@ -1,5 +1,3 @@
-# app backup from previous project
-
 from webexteamssdk import WebexTeamsAPI
 from webexteamsbot import TeamsBot
 import urllib3
@@ -10,7 +8,7 @@ import os
 
 bot_app_name = "Time Recording Bot"
 bot_token= "N2Y5NTA3NmUtYjc4MC00ZGFhLWE4MjctNDgwOTc4ZjUwMzI2YjI4MDViZTUtOGNk_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
-bot_url= "http://8b70dcddd99c.ngrok.io" #https://csap-bot.herokuapp.com/"
+bot_url= "https://csap-bot.herokuapp.com/"
 bot_email = "timerec@webex.bot"
 subscriber_db = "subscribers.txt"
 
