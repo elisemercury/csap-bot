@@ -31,113 +31,68 @@ def greeting(incoming_msg):
     firstName = sender.firstName
     room = bot.teams.rooms.get(incoming_msg.roomId)
     attachment = """
-    {
-      "contentType": "application/vnd.microsoft.card.adaptive",
-      "content": {
-    "type": "AdaptiveCard",
-    "body": [
-        {
-            "type": "ColumnSet",
-            "columns": [
-                {
-                    "type": "Column",
-                    "items": [
-                        {
-                            "type": "ColumnSet",
-                            "columns": [
-                                {
-                                    "type": "Column",
-                                    "width": "100px",
-                                    "items": [
-                                        {
-                                            "type": "Image",
-                                            "altText": "",
-                                            "url": "https://i.pinimg.com/originals/54/68/bf/5468bf0cb6dcdeab64c17731dac360ae.gif",
-                                            "horizontalAlignment": "Left"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "type": "Column",
-                                    "width": "stretch",
-                                    "items": [
-                                        {
-                                            "type": "TextBlock",
-                                            "text": "CSAP Bot",
-                                            "weight": "Lighter",
-                                            "color": "Accent"
+    {"contentType": "application/vnd.microsoft.card.adaptive",
+     "content": {"type": "AdaptiveCard",
+                 "body": [{ "type": "ColumnSet",
+                            "columns": [{"type": "Column",
+                                         "width": 2,
+                                         "items": [{"type": "TextBlock",
+                                                    "text": "26 June 2020, Vienna, Austria"
+                                                    },
+                                                    {"type": "TextBlock",
+                                                     "text": "Notification",
+                                                     "weight": "Bolder",
+                                                     "size": "ExtraLarge",
+                                                     "spacing": "None"
+                                                    },
+                                                    {"type": "TextBlock",
+                                                     "text": "**ariba** said hello",
+                                                     "size": "Small",
+                                                     "wrap": true,
+                                                     "maxLines": 3
+                                                     }
+                                                    ]
                                         },
-                                        {
-                                            "type": "TextBlock",
-                                            "weight": "Bolder",
-                                            "text": "Welcome!",
-                                            "horizontalAlignment": "Left",
-                                            "wrap": true,
-                                            "color": "Light",
-                                            "size": "Large",
-                                            "spacing": "Small"
+                                        {"type": "Column",
+                                         "width": 1,
+                                         "items": [{"type": "Image",
+                                                    "url": "https://i.pinimg.com/originals/54/68/bf/5468bf0cb6dcdeab64c17731dac360ae.gif",
+                                                    "size": "auto"
+                                                    }
+                                                  ]
                                         }
-                                    ],
-                                    "verticalContentAlignment": "Center"
-                                }
-                            ]
-                        }
-                    ],
-                    "width": "stretch"
-                }
-            ]
-        },
-        {
-            "type": "TextBlock",
-            "text": "Hello, I'm your CSAP bot. You can **subscribe** to receive updates and latest news from within the CSAP program!",
-            "wrap": true
-        },
-        {
-            "type": "TextBlock",
-            "text": "📋 **CSAP bot content includes:**",
-            "spacing": "ExtraLarge"
-        },
-        {
-            "type": "TextBlock",
-            "text": "• General CSAP infos and news",
-            "spacing": "Padding",
-            "wrap": true
-        },
-        {
-            "type": "TextBlock",
-            "text": "• Notifications about events",
-            "spacing": "Small"
-        },
-        {
-            "type": "TextBlock",
-            "text": "• Get updated on the latest newsletters created by CSAPers",
-            "height": "stretch",
-            "wrap": true,
-            "spacing": "Small"
-        }],
-    "actions": [{"type": "Action.Submit",
-                         "title": "Subscribe",
-                         "data": "subscribe",
-                         "style": "positive",
-                         "id": "button1"
-                        },
-                        {"type": "Action.OpenUrl",
-                         "title": "More Info",
-                         "url": "https://cisco.sharepoint.com/sites/CSAPGlobal/SitePages/CSAP%20Live.aspx"
-                        },
-                        {"type": "Action.Submit",
-                         "title": "Unsubscribe",
-                         "data": "unsubscribe",
-                         "style": "positive",
-                         "id": "button3" 
-                        }
-                        ],
-    
-    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-    "version": "1.2"
-}
+                                        ]},
+                            {"type": "Container",
+                            "items": [{"type": "TextBlock",
+                                       "text": "The order with number 1234567 has been booked. Please click below for more information on your order."
+                                    }
+                                    ]}],
+                "actions": [{"type": "Action.Submit",
+                             "title": "Mehr Info",
+                             "data": "Mehr Info",
+                             "style": "positive",
+                             "id": "button1"
+                            },
+                            {"type": "Action.Submit",
+                             "title": "URL Öffnen",
+                             "data": "unsubscribe",
+                             "style": "destructive",
+                             "id": "button2"
+                            },
+                            {"type": "Action.Submit",
+                             "title": "More Info",
+                             "data": "more info",
+                             "style": "destructive",
+                             "id": "button3" 
+                            }
+                            ],
+                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    "version": "1.2"
+                            }
+                            
+                
     }
-  """
+    """
     backupmessage = "This is an example using Adaptive Cards."
 
     c = create_message_with_attachment(
