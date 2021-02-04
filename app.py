@@ -18,6 +18,8 @@ subscriber_db = "subscribers.txt"
 
 api = WebexTeamsAPI(bot_token)
 
+print(api.webhooks.list())
+
 for webhook in api.webhooks.list():
     api.webhooks.delete(webhook.id)
 
