@@ -42,7 +42,7 @@ bot = TeamsBot(
     ]
 )
 
-DATABASE_URL=$(heroku config:get DATABASE_URL -a your-app) python your-script.py
+DATABASE_URL=$(heroku config:get DATABASE_URL -a csap-bot) python app.py
 
 def greeting(incoming_msg):
     fetch_infos(incoming_msg)
