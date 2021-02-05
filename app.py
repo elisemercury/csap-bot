@@ -110,13 +110,14 @@ def handle_cards(api, incoming_msg):
     :param incoming_msg: The incoming message object from Teams
     :return: A text or markdown based reply
     """
-    
+    print(get_attachment_actions(incoming_msg["data"]))
     m = get_attachment_actions(incoming_msg["data"]["id"])
     print(m)
-    sender = bot.teams.people.get(incoming_msg.personId)
-    for i in sender.emails:
-        mail = str(i)
-    roomId = str(room.id)
+    sender = m["personId"]
+    roomId = m["roomId"]
+    # for i in sender.emails:
+    #     mail = str(i)
+    # roomId = str(room.id)
     
     if m["inputs"] == "subscribe":
         with open(str(os.getcwd()) + "\\" + "subscribers.txt", "a") as f:
