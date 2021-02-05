@@ -84,12 +84,12 @@ def handle_cards(api, incoming_msg):
 #         mail = str(i)
 #     roomId = str(room.id)
 
-    db_entry = (str(roomId.id))
+    db_entry = str(roomId.id)
     print(db_entry)
 
     if m["inputs"] == "subscribe":
         #try:
-        cur.executemany("""INSERT INTO subscribers (roomid) VALUES (%s)""", db_entry)
+        cur.execute("""INSERT INTO subscribers (roomid) VALUES %s""", db_entry)
         con.commit()
         #except:
          #   print("Could not be added to DB")
