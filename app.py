@@ -42,7 +42,7 @@ bot = TeamsBot(
     ]
 )
 
-url = urlparse.urlparse(os.environ['DATABASE_URL'])
+url = urllib.urlparse(os.environ['DATABASE_URL'])
 dbname = url.path[1:]
 user = url.username
 password = url.password
@@ -57,7 +57,7 @@ con = psycopg2.connect(
             port=port
             )
 
-            
+
 def greeting(incoming_msg):
     fetch_infos(incoming_msg)
     attachment = greeting_card ### card message
