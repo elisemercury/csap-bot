@@ -87,7 +87,7 @@ def handle_cards(api, incoming_msg):
     db_entry = (str(roomId))
 
     if m["inputs"] == "subscribe":
-        exists = check_exists(roomId)
+        exists = check_exists(str(roomId))
         if exists == False:
                 #cur.execute("""SELECT * from subscribers""")
             cur.executemany("""INSERT INTO subscribers (RoomId) VALUES (%s)""", db_entry)
