@@ -94,7 +94,7 @@ def handle_cards(api, incoming_msg):
             print("Could not be added to DB")
             
             
-    if m["inputs"] == "unsubscribe":    
+    elif m["inputs"] == "unsubscribe":    
         try:
             cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
             con.commit()
@@ -102,7 +102,8 @@ def handle_cards(api, incoming_msg):
         except:
             print("Could not be removed to DB")  
     
-    return "Sorry, I do not understand the command {} yet.".format(m["inputs"])    
+    else:
+        return "Oops, something went wrong. Please retry."    
 
 def create_message_with_attachment(rid, msgtxt, attachment):
     headers = {
