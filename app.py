@@ -94,10 +94,10 @@ def handle_cards(api, incoming_msg):
         return "Thank you, you sucessfully subscribed to CSAP bot updates."
             
     if m["inputs"] == "unsubscribe":    
-        try:
-            cur.executemany("""DELETE FROM subscribers WHERE (RoomId) = (%s)""", db_entry)
-        except:
-            print("Could not be removed to DB")
+        #try:
+        cur.executemany("""DELETE FROM subscribers WHERE (RoomId) = (%s)""", db_entry)
+        #except:
+        #    print("Could not be removed to DB")
         return "Thank you, you sucessfully unsubscribed from CSAP bot updates."  
     
     return "Sorry {}, I do not understand the command {} yet.".format(firstName, m["inputs"])    
