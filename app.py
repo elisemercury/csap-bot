@@ -89,10 +89,10 @@ def handle_cards(api, incoming_msg):
         try:
             cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
             con.commit()
-        return "Thank you, you sucessfully subscribed to CSAP bot updates."
-        #except:
+            return "Thank you, you sucessfully subscribed to CSAP bot updates."
+        except:
          #   print("Could not be added to DB")
-          #  return ""
+            return "Thank you, you already subscribed to CSAP bot updates."
             
             
     if m["inputs"] == "unsubscribe":    
