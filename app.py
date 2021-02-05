@@ -125,7 +125,7 @@ def fetch_infos(incoming_msg):
 
 
 bot.set_greeting(greeting)
-#bot.add_command("attachmentActions", "*", handle_cards)
+bot.add_command("attachmentActions", "*", handle_cards)
 bot.add_command("help", "Help", help)
 bot.add_command("contact", "Contact", contact)
 
