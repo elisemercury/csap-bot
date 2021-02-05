@@ -76,8 +76,8 @@ def handle_cards(api, incoming_msg):
     :param incoming_msg: The incoming message object from Teams
     :return: A text or markdown based reply
     """
-    room = bot.teams.rooms.get(incoming_msg.roomId)
-    roomId = room.id
+    roomId = bot.teams.rooms.get(incoming_msg["data"]["roomId"])
+    #roomId = room.id
     
     m = get_attachment_actions(incoming_msg["data"]["id"])
 #     for i in sender.emails:
