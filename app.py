@@ -17,6 +17,9 @@ global greeting_card, help_card
 
 api = WebexTeamsAPI(bot_token)
 
+for webhook in api.webhooks.list():
+    api.webhooks.delete(webhook.id)
+
 bot = TeamsBot(
     bot_app_name,
     teams_bot_token=bot_token,
@@ -131,9 +134,6 @@ bot.add_command("contact", "Contact", contact)
 
 
 if __name__ == "__main__":
-    for webhook in api.webhooks.list():
-        if webhook.resource == "attachmentActions":
-            api.webhooks.delete(webhook.id)    
     # Run Bot
     bot.run()
 
