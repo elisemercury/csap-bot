@@ -96,7 +96,7 @@ def handle_cards(api, incoming_msg):
             return "Thank you, you sucessfully subscribed to CSAP bot updates."
         except:
             print("Could not be added to DB")
-            
+            return ""
             
     elif m["inputs"] == "unsubscribe":    
         try:
@@ -105,6 +105,7 @@ def handle_cards(api, incoming_msg):
             return "Thank you, you sucessfully unsubscribed from CSAP bot updates."
         except:
             print("Could not be removed to DB")  
+            return ""
     
     else:
         return "Oops, something went wrong. Please retry."    
