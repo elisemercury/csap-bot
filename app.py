@@ -110,7 +110,7 @@ def handle_cards(api, incoming_msg):
     :param incoming_msg: The incoming message object from Teams
     :return: A text or markdown based reply
     """
-    print(get_attachment_actions(incoming_msg["data"]))
+    print(incoming_msg["data"])
     m = get_attachment_actions(incoming_msg["data"]["id"])
     print(m)
     sender = m["personId"]
