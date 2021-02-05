@@ -96,7 +96,8 @@ def handle_cards(api, incoming_msg):
             
     if m["inputs"] == "unsubscribe":    
         #try:
-        str_roomId = str(roomId)
+        str_roomId = roomId
+        print(str_roomId)
         cur.execute("""DELETE FROM subscribers WHERE RoomId = %s""", (str_roomId,))
         con.commit()
         #except:
