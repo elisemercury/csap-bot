@@ -56,7 +56,7 @@ con = psycopg2.connect(
             host=host,
             port=port
             )
-
+cur = con.cursor()
 
 def greeting(incoming_msg):
     fetch_infos(incoming_msg)
