@@ -89,8 +89,8 @@ def create_message_with_attachment(rid, msgtxt, attachment):
 def get_attachment_actions(attachmentid):
 
     for webhook in api.webhooks.list():
-    if webhook.resource == "attachmentActions":
-        api.webhooks.delete(webhook.id)
+        if webhook.resource == "attachmentActions":
+            api.webhooks.delete(webhook.id)
 
     headers = {
         "content-type": "application/json; charset=utf-8",
