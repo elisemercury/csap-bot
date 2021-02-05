@@ -91,8 +91,7 @@ def handle_cards(api, incoming_msg):
             con.commit()
             return "Thank you, you sucessfully subscribed to CSAP bot updates."
         except:
-           print("Could not be added to DB")
-           return ""
+           return "Thank you, you are already subscribed to CSAP bot updates."
             
             
     if m["inputs"] == "unsubscribe":    
