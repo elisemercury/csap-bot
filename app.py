@@ -17,6 +17,16 @@ global greeting_card, help_card
 
 api = WebexTeamsAPI(bot_token)
 
+webhook_list = []
+for webhook in api.webhooks.list():
+    webhook_list.append(webhook.id)
+#print(webhook_list)
+
+
+for webhook in api.webhooks.list():
+    #print(webhook.id)
+    if webhook.id != webhook_list[-2] and webhook.id != webhook_list[-1]:
+        api.webhooks.delete(webhook.id)
 
 for webhook in api.webhooks.list():
     try:
