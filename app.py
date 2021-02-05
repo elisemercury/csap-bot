@@ -84,7 +84,7 @@ def handle_cards(api, incoming_msg):
 #         mail = str(i)
 #     roomId = str(room.id)
 
-    db_entry = str(roomId.id)
+    db_entry = roomId.id
     print(db_entry)
 
     if m["inputs"] == "subscribe":
