@@ -87,21 +87,17 @@ def handle_cards(api, incoming_msg):
     db_entry = (str(roomId))
 
     if m["inputs"] == "subscribe":
-        exists = check_exists(str(roomId))
-        if exists == False:
-                #cur.execute("""SELECT * from subscribers""")
+        try:
             cur.executemany("""INSERT INTO subscribers (RoomId) VALUES (%s)""", db_entry)
-        else: 
-            print("##### Already in DB")    
+        except:
+            print("Could not be added to DB")
         return "Thank you, you sucessfully subscribed to CSAP bot updates."
             
     if m["inputs"] == "unsubscribe":    
-        with open(subscriber_db) as json_file:
-            data = json.load(json_file)
-        if roomId in data["subscribers"]:
-            data["subscribers"].remove(roomId)        
-            with open(subscriber_db, 'w') as outfile:
-                json.dump(data, outfile)     
+        try:
+            cur.executemany("""DELETE FROM subscribers WHERE (RoomId) = (%s)""", db_entry)
+        except:
+            print("Could not be removed to DB")
         return "Thank you, you sucessfully unsubscribed from CSAP bot updates."  
     
     return "Sorry {}, I do not understand the command {} yet.".format(firstName, m["inputs"])    
