@@ -102,7 +102,7 @@ def handle_cards(api, incoming_msg):
         except:
             print("Could not be removed to DB")  
     
-    return "Sorry, I do not understand the command {} yet.".format(firstName, m["inputs"])    
+    return "Sorry, I do not understand the command {} yet.".format(m["inputs"])    
 
 def create_message_with_attachment(rid, msgtxt, attachment):
     headers = {
