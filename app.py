@@ -89,7 +89,7 @@ def handle_cards(api, incoming_msg):
 
     if m["inputs"] == "subscribe":
         #try:
-        cur.executemany("""INSERT INTO subscribers (RoomId) VALUES (%s)""", db_entry)
+        cur.executemany("""INSERT INTO subscribers (roomid) VALUES (%s)""", db_entry)
         con.commit()
         #except:
          #   print("Could not be added to DB")
@@ -99,7 +99,7 @@ def handle_cards(api, incoming_msg):
         #try:
         str_roomId = str(roomId.id)
         print(str_roomId)
-        cur.execute("""DELETE FROM subscribers WHERE RoomId = %s""", (str_roomId,))
+        cur.execute("""DELETE FROM subscribers WHERE roomid = %s""", (str_roomId,))
         con.commit()
         #except:
         #    print("Could not be removed to DB")
