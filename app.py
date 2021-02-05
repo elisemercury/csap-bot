@@ -99,7 +99,7 @@ def handle_cards(api, incoming_msg):
         #try:
         cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
         con.commit()
-            #return "Thank you, you sucessfully unsubscribed from CSAP bot updates."
+        return "Thank you, you sucessfully unsubscribed from CSAP bot updates."
         #except:
            # print("Could not be removed to DB")  
     
