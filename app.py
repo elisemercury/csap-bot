@@ -88,16 +88,16 @@ def handle_cards(api, incoming_msg):
     print(db_entry)
 
     if m["inputs"] == "subscribe":
-        try:
-            cur.executemany("""INSERT INTO subscribers (RoomId) VALUES (%s)""", db_entry)
-            con.commit()
-        except:
-            print("Could not be added to DB")
+        #try:
+        cur.executemany("""INSERT INTO subscribers (RoomId) VALUES (%s)""", db_entry)
+        con.commit()
+        #except:
+         #   print("Could not be added to DB")
         return "Thank you, you sucessfully subscribed to CSAP bot updates."
             
     if m["inputs"] == "unsubscribe":    
         #try:
-        str_roomId = roomId.id
+        str_roomId = str(roomId.id)
         print(str_roomId)
         cur.execute("""DELETE FROM subscribers WHERE RoomId = %s""", (str_roomId,))
         con.commit()
