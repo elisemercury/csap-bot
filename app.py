@@ -92,7 +92,7 @@ def handle_cards(api, incoming_msg):
             if roomId not in data["subscribers"]:
                 #cur.execute("""SELECT * from subscribers""")
                 cur.executemany("""INSERT INTO subscribers (RoomId) VALUES (%s)""", db_entry)
-                con.commit()
+                #con.commit()
                 data["subscribers"].append(roomId)        
                 with open(subscriber_db, 'w') as outfile:
                     json.dump(data, outfile)        
