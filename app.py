@@ -76,14 +76,15 @@ def handle_cards(api, incoming_msg):
     :param incoming_msg: The incoming message object from Teams
     :return: A text or markdown based reply
     """
-    sender, firstName, room, roomId = fetch_infos(incoming_msg)
+    room = bot.teams.rooms.get(incoming_msg.roomId)
+    roomId = room.id
     
     m = get_attachment_actions(incoming_msg["data"]["id"])
 #     for i in sender.emails:
 #         mail = str(i)
 #     roomId = str(room.id)
 
-    db_entry = (roomId)
+    db_entry = (str(roomId))
 
     if m["inputs"] == "subscribe":
         with open(subscriber_db) as json_file:
@@ -148,13 +149,10 @@ def contact(incoming_msg):
 def fetch_infos(incoming_msg):
     global sender, firstName, room, roomId
     sender, firstName, room, roomId = None, None, None, None
-    try:
-        sender = bot.teams.people.get(incoming_msg.personId)
-        firstName = sender.firstName
-        room = bot.teams.rooms.get(incoming_msg.roomId)
-        roomId = room.id
-    except:
-        pass
+    sender = bot.teams.people.get(incoming_msg.personId)
+    firstName = sender.firstName
+    room = bot.teams.rooms.get(incoming_msg.roomId)
+    roomId = room.id
     return sender, firstName, room, roomId
 
 
