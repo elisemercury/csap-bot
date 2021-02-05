@@ -83,10 +83,13 @@ def handle_cards(api, incoming_msg):
 #         mail = str(i)
 #     roomId = str(room.id)
 
+    db_entry = ({"RoomId": roomId})
+
     if m["inputs"] == "subscribe":
         with open(subscriber_db) as json_file:
             data = json.load(json_file)
             if roomId not in data["subscribers"]:
+                cur.execute("""SELECT * from subscribers""")
                 #cur.execute("INSERT INTO subscribers (RoomId) VALUES (%s)", (roomId))
                 data["subscribers"].append(roomId)        
                 with open(subscriber_db, 'w') as outfile:
