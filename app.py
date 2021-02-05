@@ -127,9 +127,10 @@ bot.add_command("attachmentActions", "*", handle_cards)
 bot.add_command("help", "Help", help)
 bot.add_command("contact", "Contact", contact)
 
+
 if __name__ == "__main__":
     # Run Bot
-    bot.run(host="127.0.0.1", port="80")
+    bot.run()
 
 greeting_card = """
     {
