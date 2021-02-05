@@ -90,9 +90,8 @@ def handle_cards(api, incoming_msg):
             cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
             con.commit()
 
-            cur.execute("""SELECT roomid FROM subscribers""")
-            rows = cur.fetchall()
-            print(rows)
+            #test = [cur.execute("""SELECT (roomid) FROM subscribers""")]
+            #print(test)
 
             return "Thank you, you sucessfully subscribed to CSAP bot updates."
         except:
