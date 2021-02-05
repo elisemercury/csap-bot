@@ -87,15 +87,12 @@ def handle_cards(api, incoming_msg):
     db_entry = (str(roomId))
 
     if m["inputs"] == "subscribe":
-        with open(subscriber_db) as json_file:
-            data = json.load(json_file)
-            if roomId not in data["subscribers"]:
+        exists = check_exists(roomId)
+        if exists == False:
                 #cur.execute("""SELECT * from subscribers""")
-                cur.executemany("""INSERT INTO subscribers (RoomId) VALUES (%s)""", db_entry)
-                #con.commit()
-                data["subscribers"].append(roomId)        
-                with open(subscriber_db, 'w') as outfile:
-                    json.dump(data, outfile)        
+            cur.executemany("""INSERT INTO subscribers (RoomId) VALUES (%s)""", db_entry)
+        else: 
+            print("##### Already in DB")    
         return "Thank you, you sucessfully subscribed to CSAP bot updates."
             
     if m["inputs"] == "unsubscribe":    
@@ -109,6 +106,9 @@ def handle_cards(api, incoming_msg):
     
     return "Sorry {}, I do not understand the command {} yet.".format(firstName, m["inputs"])    
 
+def check_exists(search):
+    cur.execute("SELECT RoomId FROM subscribers WHERE RoomId = %s", (search,))
+    return cur.fetchone() is not None
 
 def create_message_with_attachment(rid, msgtxt, attachment):
     headers = {
