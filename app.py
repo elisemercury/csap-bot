@@ -53,7 +53,7 @@ def handle_cards(api, incoming_msg):
     :param incoming_msg: The incoming message object from Teams
     :return: A text or markdown based reply
     """
-    fetch_infos(incoming_msg)
+    sender, firstName, room, roomId = fetch_infos(incoming_msg)
     
     m = get_attachment_actions(incoming_msg["data"]["id"])
 #     for i in sender.emails:
@@ -120,6 +120,7 @@ def contact(incoming_msg):
 
 def fetch_infos(incoming_msg):
     global sender, firstName, room, roomId
+    sender, firstName, room, roomId = None, None, None, None
     try:
         sender = bot.teams.people.get(incoming_msg.personId)
         firstName = sender.firstName
@@ -127,6 +128,7 @@ def fetch_infos(incoming_msg):
         roomId = room.id
     except:
         pass
+    return sender, firstName, room, roomId
 
 
 bot.set_greeting(greeting)
@@ -135,6 +137,18 @@ bot.add_command("help", "Help", help)
 bot.add_command("contact", "Contact", contact)
 
 if __name__ == "__main__":
+
+    webhook_list = []
+    for webhook in api.webhooks.list():
+        webhook_list.append(webhook.id)
+    #print(webhook_list)
+
+
+    for webhook in api.webhooks.list():
+        #print(webhook.id)
+        if webhook.id != webhook_list[-2] and webhook.id != webhook_list[-1]:
+            api.webhooks.delete(webhook.id)
+
     # Run Bot
     bot.run()
 
