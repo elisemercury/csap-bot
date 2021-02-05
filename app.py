@@ -84,7 +84,7 @@ def handle_cards(api, incoming_msg):
 #         mail = str(i)
 #     roomId = str(room.id)
 
-    db_entry = (roomId)
+    db_entry = (str(roomId))
 
     if m["inputs"] == "subscribe":
         try:
@@ -95,7 +95,7 @@ def handle_cards(api, incoming_msg):
             
     if m["inputs"] == "unsubscribe":    
         try:
-            cur.executemany("""DELETE FROM subscribers WHERE RoomId = (%s)""", db_entry)
+            cur.executemany("""DELETE FROM subscribers WHERE (RoomId) = (%s)""", db_entry)
         except:
             print("Could not be removed to DB")
         return "Thank you, you sucessfully unsubscribed from CSAP bot updates."  
