@@ -17,6 +17,7 @@ global greeting_card, help_card
 
 api = WebexTeamsAPI(bot_token)
 
+
 for webhook in api.webhooks.list():
     try:
         api.webhooks.delete(webhook.id)
@@ -93,8 +94,6 @@ def create_message_with_attachment(rid, msgtxt, attachment):
     return response.json()
 
 def get_attachment_actions(attachmentid):
-
-
     headers = {
         "content-type": "application/json; charset=utf-8",
         "authorization": "Bearer " + bot_token,
@@ -134,7 +133,6 @@ bot.set_greeting(greeting)
 bot.add_command("attachmentActions", "*", handle_cards)
 bot.add_command("help", "Help", help)
 bot.add_command("contact", "Contact", contact)
-
 
 if __name__ == "__main__":
     # Run Bot
