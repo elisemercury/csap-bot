@@ -77,15 +77,10 @@ def handle_cards(api, incoming_msg):
     :return: A text or markdown based reply
     """
     roomId = bot.teams.rooms.get(incoming_msg["data"]["roomId"])
-    #roomId = room.id
     
     m = get_attachment_actions(incoming_msg["data"]["id"])
-#     for i in sender.emails:
-#         mail = str(i)
-#     roomId = str(room.id)
 
     db_entry = roomId.id
-    print(db_entry)
 
     if m["inputs"] == "subscribe":
         try:
@@ -97,21 +92,14 @@ def handle_cards(api, incoming_msg):
         return "Thank you, you sucessfully subscribed to CSAP bot updates."
             
     if m["inputs"] == "unsubscribe":    
-        #try:
-        str_roomId = str(roomId.id)
-        print(str_roomId)
         try:
-            cur.execute("""DELETE FROM subscribers WHERE roomid = %s""", (str_roomId,))
+            cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
             con.commit()
         except:
             print("Could not be removed to DB")
         return "Thank you, you sucessfully unsubscribed from CSAP bot updates."  
     
-    return "Sorry {}, I do not understand the command {} yet.".format(firstName, m["inputs"])    
-
-def check_exists(search):
-    cur.execute("SELECT RoomId FROM subscribers WHERE RoomId = %s", (search,))
-    return cur.fetchone() is not None
+    return "Sorry, I do not understand the command {} yet.".format(firstName, m["inputs"])    
 
 def create_message_with_attachment(rid, msgtxt, attachment):
     headers = {
@@ -134,6 +122,29 @@ def get_attachment_actions(attachmentid):
     response = requests.get(url, headers=headers)
     return response.json()
 
+def subscribe(incoming_msg):
+    roomId = bot.teams.rooms.get(incoming_msg["data"]["roomId"])
+    db_entry = roomId.id
+
+    try:
+        cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
+        con.commit()
+    except:
+        print("Could not be added to DB")
+        
+    return "Thank you, you sucessfully subscribed to CSAP bot updates."
+
+def unsubscribe(incoming_msg):
+    roomId = bot.teams.rooms.get(incoming_msg["data"]["roomId"])
+    db_entry = roomId.id
+    str_roomId = str(roomId.id)
+
+    try:
+        cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
+        con.commit()
+    except:
+        print("Could not be removed to DB")
+    return "Thank you, you sucessfully unsubscribed from CSAP bot updates."  
 def help(incoming_msg):
     #fetch_infos(incoming_msg)
     attachment = help_card
@@ -163,6 +174,8 @@ bot.set_greeting(greeting)
 bot.add_command("attachmentActions", "*", handle_cards)
 bot.add_command("help", "Help", help)
 bot.add_command("contact", "Contact", contact)
+bot.add_command("subscribe", "subscribe", subscribe)
+bot.add_command("unsubscribe", "unsubscribe", unsubscribe)
 
 if __name__ == "__main__":
 
