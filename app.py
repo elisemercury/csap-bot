@@ -87,6 +87,11 @@ def create_message_with_attachment(rid, msgtxt, attachment):
     return response.json()
 
 def get_attachment_actions(attachmentid):
+
+    for webhook in api.webhooks.list():
+    if webhook.resource == "attachmentActions":
+        api.webhooks.delete(webhook.id)
+
     headers = {
         "content-type": "application/json; charset=utf-8",
         "authorization": "Bearer " + bot_token,
@@ -129,6 +134,7 @@ bot.add_command("contact", "Contact", contact)
 
 
 if __name__ == "__main__":
+    
     # Run Bot
     bot.run()
 
