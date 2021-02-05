@@ -89,29 +89,20 @@ def handle_cards(api, incoming_msg):
         try:
             cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
             con.commit()
-
-
-            # cur.execute("""SELECT roomid FROM subscribers""")
-            # rows = cur.fetchall()
-            # print(rows)
-
-
             return "Thank you, you sucessfully subscribed to CSAP bot updates."
         except:
             print("Could not be added to DB")
-            return ""
             
-    elif m["inputs"] == "unsubscribe":    
+            
+    if m["inputs"] == "unsubscribe":    
         try:
             cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
             con.commit()
             return "Thank you, you sucessfully unsubscribed from CSAP bot updates."
         except:
             print("Could not be removed to DB")  
-            return ""
     
-    else:
-        return "Oops, something went wrong. Please retry."    
+    return "Oops, something went wrong. Please retry."    
 
 def create_message_with_attachment(rid, msgtxt, attachment):
     headers = {
