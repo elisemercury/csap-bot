@@ -5,6 +5,8 @@ from webexteamsbot import TeamsBot
 import json
 import requests
 import os
+import psycopg2
+from urllib.parse import urlparse
 
 #working
 bot_app_name = "Time Recording Bot"
