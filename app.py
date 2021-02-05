@@ -95,14 +95,14 @@ def handle_cards(api, incoming_msg):
             
             
     if m["inputs"] == "unsubscribe":    
-        try:
-            cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
-            con.commit()
-            return "Thank you, you sucessfully unsubscribed from CSAP bot updates."
-        except:
-            print("Could not be removed to DB")  
+        #try:
+        cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
+        con.commit()
+            #return "Thank you, you sucessfully unsubscribed from CSAP bot updates."
+        #except:
+           # print("Could not be removed to DB")  
     
-    return "Oops, something went wrong. Please retry."    
+    return "Sorry, I do not understand the command {} yet.".format(firstName, m["inputs"])    
 
 def create_message_with_attachment(rid, msgtxt, attachment):
     headers = {
