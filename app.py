@@ -89,7 +89,7 @@ def handle_cards(api, incoming_msg):
 
     if m["inputs"] == "subscribe":
         #try:
-        cur.execute("""INSERT INTO subscribers (roomid) VALUES %s""", db_entry)
+        cur.execute("""INSERT INTO subscribers (roomid) VALUES %s""", (db_entry,))
         con.commit()
         #except:
          #   print("Could not be added to DB")
