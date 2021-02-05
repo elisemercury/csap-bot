@@ -96,7 +96,7 @@ def handle_cards(api, incoming_msg):
             
     if m["inputs"] == "unsubscribe":    
         #try:
-        cur.executemany("""DELETE FROM subscribers WHERE (RoomId) = (%s)""", db_entry)
+        cur.execute("""DELETE FROM subscribers WHERE RoomId = %s""", str(roomId))
         con.commit()
         #except:
         #    print("Could not be removed to DB")
