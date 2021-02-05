@@ -123,9 +123,8 @@ def get_attachment_actions(attachmentid):
     return response.json()
 
 def subscribe(incoming_msg):
-    roomId = bot.teams.rooms.get(incoming_msg["data"]["roomId"])
-    db_entry = roomId.id
-
+    fetch_infos(incoming_msg)
+    db_entry = roomId
     try:
         cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
         con.commit()
@@ -135,16 +134,16 @@ def subscribe(incoming_msg):
     return "Thank you, you sucessfully subscribed to CSAP bot updates."
 
 def unsubscribe(incoming_msg):
-    roomId = bot.teams.rooms.get(incoming_msg["data"]["roomId"])
-    db_entry = roomId.id
-    str_roomId = str(roomId.id)
+    fetch_infos(incoming_msg)
+    db_entry = roomId
 
-    #try:
-    cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
-    con.commit()
-    #except:
-        #print("Could not be removed to DB")
+    try:
+        cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
+        con.commit()
+    except:
+        print("Could not be removed to DB")
     return "Thank you, you sucessfully unsubscribed from CSAP bot updates."  
+
 def help(incoming_msg):
     #fetch_infos(incoming_msg)
     attachment = help_card
