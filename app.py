@@ -139,11 +139,11 @@ def unsubscribe(incoming_msg):
     db_entry = roomId.id
     str_roomId = str(roomId.id)
 
-    try:
-        cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
-        con.commit()
-    except:
-        print("Could not be removed to DB")
+    #try:
+    cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
+    con.commit()
+    #except:
+        #print("Could not be removed to DB")
     return "Thank you, you sucessfully unsubscribed from CSAP bot updates."  
 def help(incoming_msg):
     #fetch_infos(incoming_msg)
