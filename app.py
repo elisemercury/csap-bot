@@ -28,11 +28,6 @@ for webhook in api.webhooks.list():
     if webhook.id != webhook_list[-2] and webhook.id != webhook_list[-1]:
         api.webhooks.delete(webhook.id)
 
-for webhook in api.webhooks.list():
-    try:
-        api.webhooks.delete(webhook.id)
-    except:
-        continue
 
 bot = TeamsBot(
     bot_app_name,
