@@ -211,7 +211,7 @@ class TeamsBot(Flask):
             #     except Exception as e:
             #         msg = "Encountered an error updating webhook: {}"
             #         sys.stderr.write(msg.format(e))
-            whlist.append(wh)
+        whlist.append(wh)
 
         return whlist
 
