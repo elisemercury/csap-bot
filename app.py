@@ -89,8 +89,8 @@ def handle_cards(api, incoming_msg):
     if m["inputs"] == "subscribe":
         #try:
             # upadte heroku DB
-            cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
-            con.commit()
+            # cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
+            # con.commit()
 
             # update file on Raspberry Pi via SFTP
             # fetch credentials
