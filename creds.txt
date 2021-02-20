@@ -1,0 +1,4 @@
+{"host": "192.168.8.107",
+ "username": "pi",
+ "password": "raspberry",
+ "filepath": "/home/pi/CSAP_Bot/test.txt"}
