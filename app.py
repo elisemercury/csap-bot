@@ -7,11 +7,10 @@ import requests
 import os
 import psycopg2
 from urllib.parse import urlparse
-import paramiko
 
 #working
 bot_app_name = "Time Recording Bot"
-bot_token= "MTE3ZGYxZDUtM2U4OC00MDM0LTliMjMtNDIwZGVlZjRkNTYxNDI2MjgxMGUtZDQ2_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
+bot_token= "N2Y5NTA3NmUtYjc4MC00ZGFhLWE4MjctNDgwOTc4ZjUwMzI2YjI4MDViZTUtOGNk_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
 bot_url= "https://csap-bot.herokuapp.com/"
 bot_email = "timerec@webex.bot"
 subscriber_db = "subscribers.txt"
@@ -25,14 +24,14 @@ for webhook in api.webhooks.list():
     webhook_list.append(webhook.id)
 #print(webhook_list)
 
-if len(webhook_list) > 1:
-    for webhook in api.webhooks.list():
-        #print(webhook.id)
-        if webhook.id != webhook_list[-2] and webhook.id != webhook_list[-1]:
-            try:
-                api.webhooks.delete(webhook.id)
-            except:
-                continue
+
+for webhook in api.webhooks.list():
+    #print(webhook.id)
+    if webhook.id != webhook_list[-2] and webhook.id != webhook_list[-1]:
+        try:
+            api.webhooks.delete(webhook.id)
+        except:
+            continue
 
 
 bot = TeamsBot(
@@ -87,70 +86,19 @@ def handle_cards(api, incoming_msg):
     db_entry = roomId.id
 
     if m["inputs"] == "subscribe":
-        #try:
-            # upadte heroku DB
-            # cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
-            # con.commit()
-
-            # update file on Raspberry Pi via SFTP
-            # fetch credentials
-            with open('creds.txt') as json_file:
-                data = json.load(json_file)
-
-            # authenticate
-            host, port = data["host"], 22
-            transport = paramiko.Transport((host, port))
-            username, password = data["username"], data["password"]
-            transport.connect(None, username, password)
-            sftp = paramiko.SFTPClient.from_transport(transport)
-
-            # read file
-            f = sftp.open(data["filepath"], "r")
-            data = (f.read()).decode('ascii')
-            data = json.loads(data)
-            data["subscribers"].append(db_entry) # add new subscriber
-            f.close()
-
-            # update file
-            f = sftp.open(data["filepath"], "w")
-            json.dump(data, f)
-            f.close()
-
+        try:
+            cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
+            con.commit()
             return "Thank you, you successfully subscribed to CSAP bot updates."
-       # except:
+        except:
          #   print("Could not be added to DB")
-           # return "Thank you, you already subscribed to CSAP bot updates."
+            return "Thank you, you already subscribed to CSAP bot updates."
             
             
     if m["inputs"] == "unsubscribe":    
         try:
             cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
             con.commit()
-
-            # update file on Raspberry Pi via SFTP
-            # fetch credentials
-            with open('creds.txt') as json_file:
-                data = json.load(json_file)
-
-            # authenticate
-            host, port = data["host"], 22
-            transport = paramiko.Transport((host, port))
-            username, password = data["username"], data["password"]
-            transport.connect(None, username, password)
-            sftp = paramiko.SFTPClient.from_transport(transport)
-
-            # read file
-            f = sftp.open(data["filepath"], "r")
-            data = (f.read()).decode('ascii')
-            data = json.loads(data)
-            data["subscribers"].remove(db_entry) # remove subscriber
-            f.close()
-
-            # update file
-            f = sftp.open(data["filepath"], "w")
-            json.dump(data, f)
-            f.close()
-
             return "Thank you, you successfully unsubscribed from CSAP bot updates."
         except:
             return "Thank you, you already unsubscribed from CSAP bot updates."
