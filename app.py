@@ -87,7 +87,7 @@ def handle_cards(api, incoming_msg):
     db_entry = roomId.id
 
     if m["inputs"] == "subscribe":
-        try:
+        #try:
             # upadte heroku DB
             cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
             con.commit()
@@ -117,9 +117,9 @@ def handle_cards(api, incoming_msg):
             f.close()
 
             return "Thank you, you successfully subscribed to CSAP bot updates."
-        except:
+       # except:
          #   print("Could not be added to DB")
-            return "Thank you, you already subscribed to CSAP bot updates."
+           # return "Thank you, you already subscribed to CSAP bot updates."
             
             
     if m["inputs"] == "unsubscribe":    
