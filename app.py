@@ -11,7 +11,7 @@ import paramiko
 
 #working
 bot_app_name = "Time Recording Bot"
-bot_token= "N2Y5NTA3NmUtYjc4MC00ZGFhLWE4MjctNDgwOTc4ZjUwMzI2YjI4MDViZTUtOGNk_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
+bot_token= "ZWFkZTFiYjAtYjYwZS00YmJkLTk5NTMtNjZkMmNjYzU5ZWEzNzg0ZmNlNTctZTk3_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
 bot_url= "https://csap-bot.herokuapp.com/"
 bot_email = "timerec@webex.bot"
 subscriber_db = "subscribers.txt"
