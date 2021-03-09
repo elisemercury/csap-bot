@@ -16,7 +16,7 @@ bot_email = "GoCSAP@webex.bot"
 subscriber_db = "subscribers.txt"
 logs = "logs.txt"
 
-global greeting_card, help_card
+global greeting_card, help_card, approve_card, notif_card, send_card
 
 api = WebexTeamsAPI(bot_token)
 
@@ -95,7 +95,7 @@ def handle_cards(api, incoming_msg):
         except:
             # delete card
             api.messages.delete(messageId=m["messageId"])  
-            return "Thank you, you already subscribed to CSAP bot updates."
+            return "Thank you, you sucessfully subscribed to CSAP bot updates."
             
     elif m["inputs"] == "unsubscribe":    
         try:
@@ -111,12 +111,12 @@ def handle_cards(api, incoming_msg):
         except:
             # delete card
             api.messages.delete(messageId=m["messageId"]) 
-            return "Thank you, you already unsubscribed from CSAP bot updates."
+            return "Thank you, you successfully unsubscribed from CSAP bot updates."
 
     elif "{'textbox_1':" in str(m["inputs"]):
-        
+        print(1)
         log(incoming_msg, severity=1, personId=personId, infoMsg="Notification submitted.")
-        
+        print(2)
         parse = []
         image_url = m["inputs"]["image_url"]
         small_title = m["inputs"]["small_title"]
@@ -131,7 +131,7 @@ def handle_cards(api, incoming_msg):
         button2_url = m["inputs"]["button2_url"]
         button3_url = m["inputs"]["button3_url"]   
         review = m["inputs"]["review"]   
-        
+        print(3)
         # correct URL is invalid
         if "https" not in image_url:
             image_url = "https://" + image_url
@@ -141,14 +141,14 @@ def handle_cards(api, incoming_msg):
             button2_url = "https://" + button2_url
         if "https" not in button3_url:
             button3_url = "https://" + button3_url
-        
+        print(4)
         parse.extend([image_url, small_title, main_title, textbox_1, textbox_2, textbox_3, button1_text, button2_text,
                     button3_text, button1_url, button2_url, button3_url])
         
         for element in parse:
             if element == "" or element == " ":
                 return "Oops, seems like you didn't fill out all required fields. Please verify your entries and re-submit the notification."
-        
+        print(5)
         parse_msg(parse, roomId, review)
 
         return ""
@@ -196,30 +196,32 @@ def handle_cards(api, incoming_msg):
     return "Sorry, I do not understand the command {} yet.".format(firstName, m["inputs"])    
 
 def parse_msg(parse, roomId, review):
-    
+    print(5)
     now = datetime.now()
     msg_id = now.strftime("%d%m%Y-%H%M")
     
     parse.extend([msg_id, roomId])
-    
+    print(6)
     attachment = notif_card.format(image_url=parse[0], small_title=parse[1], main_title=parse[2], 
                                    textbox_1=parse[3], textbox_2=parse[4], textbox_3=parse[5], 
                                    button1_text=parse[6], button2_text=parse[7], button3_text=parse[8], 
                                    button1_url=parse[9], button2_url=parse[10], button3_url=parse[11],
                                    msg_id=parse[12])   
-    
+    print(7)
     backupmessage = "Oops, this notification contained a card but it could not be displayed 😢"
     
     if str(review) == "true":
-
+        print(8)
         with open('parse.pkl', 'wb') as f:
             pickle.dump(parse, f)
         c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
                                            attachment=json.loads(attachment))    
+
+        print(9)                                    
          
         c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
                                            attachment=json.loads(approve_card.format(msg_id=parse[12])))  
-        
+        print(10)
         log(incoming_msg, severity=1, personId=personId, infoMsg="Notification submitted and sent for review.")
         
     else:
@@ -311,7 +313,7 @@ def log(incoming_msg, severity, personId, infoMsg=""):
     # severity 0, 1, 2, 3 (0=informational, ..., 3=emergency)
     with open(logs) as json_file:
         data = json.load(json_file)
-    
+    print(300)
     now = datetime.now()
     logDate = now.strftime("%d%m%Y-%H:%M")   
     
@@ -319,7 +321,7 @@ def log(incoming_msg, severity, personId, infoMsg=""):
                      "severity": severity,
                      "infoMsg": infoMsg,
                      "personId": personId}
-      
+    print(301) 
     with open(logs, 'w') as outfile:
         json.dump(data, outfile)    
 
