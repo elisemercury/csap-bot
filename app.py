@@ -70,12 +70,12 @@ def greeting(incoming_msg):
     attachment = greeting_card #.format ### card message
     backupmessage = "Oops, this notification contained a card but it could not be displayed 😢"
 
+    result = check_admin(personId)
+    print(result)
+
     c = create_message_with_attachment(
         incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
     )
-
-    result = check_admin(personId)
-    print(result)
     
     return ""
 
