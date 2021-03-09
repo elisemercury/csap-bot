@@ -337,7 +337,7 @@ def log(incoming_msg, severity, personId, infoMsg=""):
 def check_admin(personId="", email=""):
     if personId != "":
         cur.execute("""SELECT personid FROM admins;""")
-        adminList = cursor.fetchall()
+        adminList = cur.fetchall()
         print(adminList)
         if personId in adminList:
             return "Authorized"
@@ -346,7 +346,7 @@ def check_admin(personId="", email=""):
 
     elif email != "":
         cur.execute("""SELECT email FROM admins;""")
-        adminList = cursor.fetchall()
+        adminList = cur.fetchall()
         print(adminList)
         if email in adminList:
             return "Authorized"
