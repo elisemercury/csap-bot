@@ -66,12 +66,16 @@ cur = con.cursor()
 
 def greeting(incoming_msg):
     fetch_infos(incoming_msg)
+    print(personId)
     attachment = greeting_card #.format ### card message
     backupmessage = "Oops, this notification contained a card but it could not be displayed 😢"
 
     c = create_message_with_attachment(
         incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
     )
+
+    result = check_admin(personId)
+    print(result)
     
     return ""
 
@@ -329,7 +333,24 @@ def log(incoming_msg, severity, personId, infoMsg=""):
     with open(logs, 'w') as outfile:
         json.dump(data, outfile)    
 
+def check_admin(personId="", email=""):
+    if personId != "":
+        adminList = cur.execute("""SELECT personid FROM admins""")
+        print(adminList)
+        if personId in adminList:
+            return "Authorized"
+        else:
+            return "Unauthorized"
 
+    elif email != "":
+        adminList = cur.execute("""SELECT email FROM admins""")
+        print(adminList)
+        if email in adminList:
+            return "Authorized"
+        else:
+            return "Unauthorized"
+    else:
+        return "Unauthorized"
 
 bot.set_greeting(greeting)
 bot.add_command("attachmentActions", "*", handle_cards)
