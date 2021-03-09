@@ -91,11 +91,6 @@ def handle_cards(api, incoming_msg):
         try:
             cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
             con.commit()
-<<<<<<< Updated upstream
-            return "Thank you, you successfully subscribed to CSAP bot updates."
-        except:
-         #   print("Could not be added to DB")
-=======
             # update log
             log(incoming_msg, severity=0, personId="", infoMsg="Subscriber database updated.")
             # send success message
@@ -107,19 +102,12 @@ def handle_cards(api, incoming_msg):
         except:
             # delete card
             api.messages.delete(messageId=m["messageId"])  
->>>>>>> Stashed changes
             return "Thank you, you already subscribed to CSAP bot updates."
             
     elif m["inputs"] == "unsubscribe":    
         try:
             cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
             con.commit()
-<<<<<<< Updated upstream
-            return "Thank you, you successfully unsubscribed from CSAP bot updates."
-        except:
-            return "Thank you, you already unsubscribed from CSAP bot updates."
-    
-=======
             log(incoming_msg, severity=0, personId="", infoMsg="Subscriber database updated.")
             # send success message
             text="Thank you, you sucessfully unsubscribed from CSAP bot updates."
@@ -212,7 +200,6 @@ def handle_cards(api, incoming_msg):
 
     api.messages.delete(messageId=m["messageId"])
     log(incoming_msg, severity=3, personId=personId, infoMsg="Faulty command. Please review: "+str(m["inputs"]))
->>>>>>> Stashed changes
     return "Sorry, I do not understand the command {} yet.".format(firstName, m["inputs"])    
 
 def parse_msg(parse, roomId, review):
