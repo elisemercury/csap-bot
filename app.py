@@ -9,17 +9,10 @@ import psycopg2
 from urllib.parse import urlparse
 
 #working
-<<<<<<< Updated upstream
-bot_app_name = "Time Recording Bot"
-bot_token= "MTE3ZGYxZDUtM2U4OC00MDM0LTliMjMtNDIwZGVlZjRkNTYxNDI2MjgxMGUtZDQ2_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
-bot_url= "https://csap-bot.herokuapp.com/"
-bot_email = "timerec@webex.bot"
-=======
 bot_app_name = "GoCSAP"
 bot_token= "NTUxMGExNmItOTA2OC00YmI3LTkzOGUtZDJjNDY4MTc2MjZiZjMzMGU4YWUtMjQx_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
 bot_url= "https://csap-bot.herokuapp.com/"
 bot_email = "GoCSAP@webex.bot"
->>>>>>> Stashed changes
 subscriber_db = "subscribers.txt"
 logs = "logs.txt"
 
