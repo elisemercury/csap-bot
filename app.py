@@ -224,11 +224,11 @@ def parse_msg(parse, roomId, review):
         c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
                                            attachment=json.loads(approve_card.format(msg_id=parse[12])))  
         print(10)
-        log(incoming_msg, severity=1, personId=personId, infoMsg="Notification submitted and sent for review.")
+        log(incoming_msg="", severity=1, personId=personId, infoMsg="Notification submitted and sent for review.")
         
     else:
         c = create_message_with_attachment(roomId, msgtxt=backupmessage, attachment=json.loads(attachment))
-        log(incoming_msg, severity=2, personId=personId, infoMsg="Notification sent without review.")
+        log(incoming_msg="", severity=2, personId=personId, infoMsg="Notification submitted without review.")
         # change to bot subscribers
 
 def create_message_with_attachment(rid, msgtxt, attachment):
@@ -258,6 +258,7 @@ def subscribe(incoming_msg):
     try:
         cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
         con.commit()
+        log(incoming_msg, severity=0, personId="", infoMsg="Subscriber database updated.")
     except:
         print("Could not be added to DB")
         
@@ -270,8 +271,9 @@ def unsubscribe(incoming_msg):
     try:
         cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
         con.commit()
+        log(incoming_msg, severity=0, personId="", infoMsg="Subscriber database updated.")
     except:
-        print("Could not be removed to DB")
+        print("Could not be removed from DB")
     return "Thank you, you sucessfully unsubscribed from CSAP bot updates."  
 
 def help(incoming_msg):
@@ -498,6 +500,16 @@ notif_card = """
                         ],
                 "horizontalAlignment": "Left",
                 "spacing": "None"
+    }},
+    {{
+        "type": "TextBlock",
+        "text": "Under review: {msg_id}",
+        "spacing": "None",
+        "horizontalAlignment": "Right",
+        "fontType": "Monospace",
+        "size": "Small",
+        "weight": "Lighter",
+        "color": "Light"
     }}
     
     
