@@ -296,14 +296,15 @@ def contact(incoming_msg):
     return "Thank you {} for using the CSAP bot. \n Current version is v1.0. \n Please contact elandman@cisco.com for more information.".format(firstName)
 
 def fetch_infos(incoming_msg):
-    global sender, firstName, room, roomId
+    global sender, firstName, room, roomId, personId
     sender, firstName, room, roomId = None, None, None, None
     sender = bot.teams.people.get(incoming_msg.personId)
+    personId = sender.id
     email = sender.emails
     firstName = sender.firstName
     room = bot.teams.rooms.get(incoming_msg.roomId)
     roomId = room.id
-    return sender, firstName, room, roomId, email
+    return sender, firstName, room, roomId, email, personId
 
 def send_notif(incoming_msg):
     person = bot.teams.people.get(incoming_msg.personId)
