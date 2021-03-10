@@ -34,16 +34,16 @@ Benefits:
 ## Bot Access Levels
 :white_check_mark: **General Access**
 
-People with general access can **subscribe** to and receive GoCSAP bot updates. Updates can range from newsletters, to event information, to special announcements, and more.
+People with general access can subscribe to and receive GoCSAP bot updates. Updates can range from CSAP newsletters, to event information, to special announcements, and more.
 
 :white_check_mark: **Admin Access**
 
-People with admin access can **submit custom notifications** through the GoCSAP bot. These notifications will be sent to all bot subscribers. 
-Admin access is reserved for newsletter comitees, event organizors, social media ambassadors, and more. 
+People with admin access can submit custom notifications through the GoCSAP bot. These notifications will be sent to all bot subscribers. 
+Admin access is reserved for newsletter comitees, event organizers, social media ambassadors, and more. 
 
 :white_check_mark: **Superadmin Access**
 
-People with superadmin access have **all admin rights**. Additionnaly, superadmins can **grant/revoke admin access**.
+People with superadmin access have all admin rights. Additionnaly, superadmins can grant/revoke admin access.
 Superadmin access is reserved for people managing the GoCSAP bot. At least 1 superadmin is required.
 
 ## Development Progress
