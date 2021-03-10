@@ -847,6 +847,204 @@ approve_card = """
     }}
   """ #.format(test="ALOHA")
 
+analytics_card = """
+    {{
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {{
+    "type": "AdaptiveCard",
+    "body": [
+        {{
+            "type": "ColumnSet",
+            "columns": [
+                {{
+                    "type": "Column",
+                    "items": [
+                        {{
+                            "type": "TextBlock",
+                            "text": "GoCSAP Bot, {today_date}",
+                            "weight": "Lighter",
+                            "color": "Accent"
+                        }},
+                        {{
+                            "type": "TextBlock",
+                            "weight": "Bolder",
+                            "text": "Admin Analytics",
+                            "horizontalAlignment": "Left",
+                            "wrap": true,
+                            "color": "Light",
+                            "size": "Large",
+                            "spacing": "Small"
+                        }},
+                        {{
+                            "type": "TextBlock",
+                            "text": "📊 Welcome to the GoCSAP bot admin analytics. You can view a summary of statistics below, or pull a detailed report by clicking the **Pull Report** button.",
+                            "wrap": true
+                        }}
+                    ],
+                    "width": "stretch"
+                }}
+            ]
+        }},
+        {{
+            "type": "ColumnSet",
+            "columns": [
+                {{
+                    "type": "Column",
+                    "width": 35,
+                    "items": [
+                        {{
+                            "type": "TextBlock",
+                            "text": "Total subscribers:",
+                            "spacing": "Small"
+                        }},
+                        {{
+                            "type": "TextBlock",
+                            "text": "Total admins:",
+                            "spacing": "ExtraLarge"
+                        }},
+                        {{
+                            "type": "TextBlock",
+                            "text": "Total superadmins:",
+                            "spacing": "Small"
+                        }}
+                    ]
+                }},
+                {{
+                    "type": "Column",
+                    "width": 50,
+                    "items": [
+                        {{
+                            "type": "TextBlock",
+                            "text": "{nr_subscribers}",
+                            "spacing": "Small"
+                        }},
+                        {{
+                            "type": "TextBlock",
+                            "text": "{nr_admins}",
+                            "spacing": "ExtraLarge"
+                        }},
+                        {{
+                            "type": "TextBlock",
+                            "text": "{nr_superadmins}",
+                            "spacing": "Small"
+                        }}
+                    ]
+                }}
+            ],
+            "spacing": "Padding",
+            "horizontalAlignment": "Center"
+        }},
+        {{
+            "type": "ActionSet",
+            "actions": [
+                {{
+                    "type": "Action.Submit",
+                    "title": "Pull Report",
+                    "data":  "pull_report"
+                }}
+            ],
+            "horizontalAlignment": "Left",
+            "spacing": "None"
+        }}
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.2"
+}}
+    }}
+  """ #.format(test="ALOHA")
+
+request_admin_card = """
+    {{
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {{
+    "type": "AdaptiveCard",
+    "body": [
+        {{
+            "type": "ColumnSet",
+            "columns": [
+                {{
+                    "type": "Column",
+                    "items": [
+                        {{
+                            "type": "TextBlock",
+                            "weight": "Bolder",
+                            "text": "New {level} access request",
+                            "horizontalAlignment": "Left",
+                            "wrap": true,
+                            "color": "Light",
+                            "size": "Large",
+                            "spacing": "Small"
+                        }},
+                        {{
+                            "type": "TextBlock",
+                            "text": "**{requestor}** requested **{level}** access to the GoCSAP bot. Please approve or decline the request.",
+                            "wrap": true
+                        }}
+                    ],
+                    "width": "stretch"
+                }}
+            ]
+        }},
+        {{
+            "type": "ActionSet",
+            "actions": [
+                {{
+                    "type": "Action.ShowCard",
+                    "title": "What is this?",
+                    "card": {{
+                        "type": "AdaptiveCard",
+                        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                        "body": [
+                            {{
+                                "type": "TextBlock",
+                                "text": "You are a superadmin for the CSAP bot, therefore your approval is required when admin/superadmin requests are submitted.",
+                                "wrap": true
+                            }},
+                            {{
+                                "type": "FactSet",
+                                "facts": [
+                                    {{
+                                        "title": "Admin",
+                                        "value": "Can submit notifications through the CSAP bot to all bot subscribers."
+                                    }},
+                                    {{
+                                        "title": "Superadmin",
+                                        "value": "Have admin rights, can approve new admins/superadmins and have access to admin/superadmin records."
+                                    }}
+                                ]
+                            }}
+                        ]
+                    }}
+                }}
+            ],
+            "spacing": "None"
+        }},
+        {{
+            "type": "ActionSet",
+            "actions": [
+                {{
+                    "type": "Action.Submit",
+                    "title": "Decline",
+                    "id": "Decline",
+                    "data": "decline_admin {requestor} {level}"
+                }},
+                {{
+                    "type": "Action.Submit",
+                    "title": "Approve",
+                    "id": "Approve",
+                    "data": "approve_admin {requestor} {level}"
+                }}
+            ],
+            "spacing": "None",
+            "horizontalAlignment": "Left"
+        }}
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.2"
+}}
+    }}
+  """
+
 
 notif_card = """
     {{
@@ -943,14 +1141,15 @@ notif_card = """
                 "spacing": "None"
     }},
     {{
-        "type": "TextBlock",
-        "text": "Under review: {msg_id}",
-        "spacing": "None",
-        "horizontalAlignment": "Right",
-        "fontType": "Monospace",
-        "size": "Small",
-        "weight": "Lighter",
-        "color": "Light"
+            "type": "TextBlock",
+            "text": "Under review: {msg_id}",
+            "spacing": "None",
+            "horizontalAlignment": "Right",
+            "fontType": "Monospace",
+            "size": "Small",
+            "weight": "Lighter",
+            "color": "Light",
+            "isVisible": {isVisible}
     }}
     
     
