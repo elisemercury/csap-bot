@@ -1,6 +1,6 @@
 # GoCSAP Bot
 
-This is the official GoCSAP bot repo, especially designed to keep you up to date on the most important topics around CSAP.
+This is the official GoCSAP bot repo. The bot is especially designed to keep you up to date on the most important topics around CSAP.
 
 You can subscribe to the bot by contacting GoCSAP@webex.bot in the Webex App and typing the command `subscribe`.
 <p align="center">
