@@ -15,6 +15,7 @@ The GoCSAP bot is an improved replacement for emails.
 Benefits:
 * Consistent design
 * Pre-formatted layouts
+* No mailerlists
 * Easily retrievable from wihtin the Webex App
 * with a small touch of innovation :smirk:
 
