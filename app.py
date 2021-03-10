@@ -60,12 +60,9 @@ cur = con.cursor()
 
 def greeting(incoming_msg):
     fetch_infos(incoming_msg)
-    print(personId)
+
     attachment = greeting_card #.format ### card message
     backupmessage = "Hi there! 👋 It's nice to meet you."
-
-    result = check_permission(personId)
-    print(result)
 
     c = create_message_with_attachment(
         incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
@@ -412,14 +409,16 @@ def unsubscribe(incoming_msg):
 
 def help(incoming_msg):
     if check_permission(email=incoming_msg.personEmail, level="superadmin") == "Authorized":
-        attachment = help_card_admin.format(level="superadmin")
+        admin_info = "As superadmin you can send notifications to bot subscribers, view bot analytics and receive approval requests for new admin."
+        attachment = help_card_admin.format(level="superadmin", admin_info=admin_info)
         backupmessage = "Hi there! 👋 The GoCSAP bot just sent some help."
 
         c = create_message_with_attachment(
             incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
         )    
     elif check_permission(email=incoming_msg.personEmail) == "Authorized":
-        attachment = help_card_admin.format(level="admin")
+        admin_info = "As admin you can send notifications to bot subscribers and view bot analytics."
+        attachment = help_card_admin.format(level="admin", admin_info=admin_info)
         backupmessage = "Hi there! 👋 The GoCSAP bot just sent some help."
 
         c = create_message_with_attachment(
@@ -854,7 +853,7 @@ help_card_admin = """
         }},
         {{
             "type": "TextBlock",
-            "text": "Your current GoCSAP bot access level: {level}.",
+            "text": "Your current GoCSAP bot access level: **{level}**. {admin_info}",
             "wrap": true
         }},
         {{
