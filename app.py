@@ -9,6 +9,7 @@ import psycopg2
 from urllib.parse import urlparse
 from datetime import date, datetime
 import pickle
+import time
 
 #working
 bot_app_name = "GoCSAP"
