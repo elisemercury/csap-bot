@@ -418,13 +418,21 @@ def unsubscribe(incoming_msg):
     return "Thank you, you sucessfully unsubscribed from CSAP bot updates."  
 
 def help(incoming_msg):
-    #fetch_infos(incoming_msg)
-    attachment = help_card
-    backupmessage = "Hi there! 👋 The GoCSAP bot just sent you a card."
+    if check_permission(email=incoming_msg.personEmail) == "Authorized":
+        attachment = help_card_admin
+        backupmessage = "Hi there! 👋 The GoCSAP bot just sent some help."
 
-    c = create_message_with_attachment(
-        incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
-    )    
+        c = create_message_with_attachment(
+            incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
+        )    
+      
+    else:
+        attachment = help_card
+        backupmessage = "Hi there! 👋 The GoCSAP bot just sent some help."
+
+        c = create_message_with_attachment(
+            incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
+        )    
     
     return ""
 
@@ -739,8 +747,7 @@ def admin_analytics(incoming_msg):
     else:
         log(incoming_msg, severity=2, personId=personId, infoMsg="Analytics requested without permission.", personEmail=incoming_msg.personEmail)
         text = "You do not have permission to view GoCSAP bot analytics. You can request admin access by typing **make admin**.".format(reqEmail)
-        return text
-    
+        return text    
     
 def joke(incoming_msg):
     f = "https://official-joke-api.appspot.com/random_ten"
@@ -795,6 +802,319 @@ if __name__ == "__main__":
 
     # Run Bot
     bot.run()
+
+help_card_admin = """
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "ColumnSet",
+                            "columns": [
+                                {
+                                    "type": "Column",
+                                    "width": "stretch",
+                                    "items": [
+                                        {
+                                            "type": "TextBlock",
+                                            "text": "GoCSAP Bot",
+                                            "weight": "Lighter",
+                                            "color": "Accent"
+                                        },
+                                        {
+                                            "type": "TextBlock",
+                                            "weight": "Bolder",
+                                            "text": "Help",
+                                            "horizontalAlignment": "Left",
+                                            "wrap": true,
+                                            "color": "Light",
+                                            "size": "Large",
+                                            "spacing": "Small"
+                                        }
+                                    ],
+                                    "verticalContentAlignment": "Center"
+                                }
+                            ]
+                        }
+                    ],
+                    "width": "stretch"
+                }
+            ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "Hello! 👋 I'm your GoCSAP bot. You can **subscribe** to receive updates and latest news from within the CSAP program.",
+            "wrap": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "I was especially designed to keep you up to date on the most important topics around CSAP. ",
+            "wrap": true
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.ShowCard",
+                    "title": "View Commands",
+                    "card": {
+                        "type": "AdaptiveCard",
+                        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                        "body": [
+                            {
+                                "type": "TextBlock",
+                                "text": "🙋 **I understand the following commands:**",
+                                "spacing": "ExtraLarge"
+                            },
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "130px",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`subscribe`"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Subscribe to GoCSAP bot updates.",
+                                                "wrap": true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "130px",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`unsubscribe`"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Unsubscribe from GoCSAP bot updates."
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "130px",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`help`"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Open CSAP bot information."
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "130px",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`contact`"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Contact the team behind the GoCSAP bot.",
+                                                "wrap": true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "130px",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`make admin`"
+                                            },
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`make superadmin`",
+                                                "spacing": "None"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Submit a request for GoCSAP bot admin access. Followed by a Cisco email address when requesting for someone else.",
+                                                "wrap": true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ],
+            "spacing": "Small"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.ShowCard",
+                    "title": "View Admin Commands",
+                    "card": {
+                        "type": "AdaptiveCard",
+                        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                        "body": [
+                            {
+                                "type": "TextBlock",
+                                "text": "🔥 **I understand the following admin commands:**"
+                            },
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "130px",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`send notif`"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Submit a notification to be sent to all GoCSAP bot subscribers.",
+                                                "wrap": true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "130px",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`analytics`"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "auto",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Request GoCSAP bot analytics."
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "130px",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`cancel admin`"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Revoke all admin rights. Followed by a Cisco email address when revoking for someone else (only superadmins can revoke for someone else).",
+                                                "wrap": true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ],
+            "spacing": "Small"
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.2"
+}
+    }
+  """
 
 approve_card = """
     {{
@@ -1045,7 +1365,6 @@ request_admin_card = """
     }}
   """
 
-
 notif_card = """
     {{
       "contentType": "application/vnd.microsoft.card.adaptive",
@@ -1290,7 +1609,7 @@ help_card = """
                                     "items": [
                                         {
                                             "type": "TextBlock",
-                                            "text": "CSAP Bot",
+                                            "text": "GoCSAP Bot",
                                             "weight": "Lighter",
                                             "color": "Accent"
                                         },
@@ -1316,7 +1635,7 @@ help_card = """
         },
         {
             "type": "TextBlock",
-            "text": "Hello, I'm your CSAP bot. You can **subscribe** to receive updates and latest news from within the CSAP program!",
+            "text": "Hello! 👋 I'm your GoCSAP bot. You can **subscribe** to receive updates and latest news from within the CSAP program.",
             "wrap": true
         },
         {
@@ -1325,157 +1644,158 @@ help_card = """
             "wrap": true
         },
         {
-            "type": "TextBlock",
-            "text": "🙋 **I understand the following commands:**",
-            "spacing": "ExtraLarge"
-        },
-        {
-            "type": "ColumnSet",
-            "columns": [
-                {
-                    "type": "Column",
-                    "width": "120px",
-                    "items": [
-                        {
-                            "type": "TextBlock",
-                            "text": "`subscribe`"
-                        }
-                    ]
-                },
-                {
-                    "type": "Column",
-                    "width": "stretch",
-                    "items": [
-                        {
-                            "type": "TextBlock",
-                            "text": "Subscribe to CSAP bot updates.",
-                            "wrap": true
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "ColumnSet",
-            "columns": [
-                {
-                    "type": "Column",
-                    "width": "120px",
-                    "items": [
-                        {
-                            "type": "TextBlock",
-                            "text": "`unsubscribe`"
-                        }
-                    ]
-                },
-                {
-                    "type": "Column",
-                    "width": "stretch",
-                    "items": [
-                        {
-                            "type": "TextBlock",
-                            "text": "Unsubscribe from CSAP bot updates."
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "ColumnSet",
-            "columns": [
-                {
-                    "type": "Column",
-                    "width": "120px",
-                    "items": [
-                        {
-                            "type": "TextBlock",
-                            "text": "`more info`"
-                        }
-                    ]
-                },
-                {
-                    "type": "Column",
-                    "width": "stretch",
-                    "items": [
-                        {
-                            "type": "TextBlock",
-                            "text": "Open **CSAP Global** Sharepoint info page."
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "ColumnSet",
-            "columns": [
-                {
-                    "type": "Column",
-                    "width": "120px",
-                    "items": [
-                        {
-                            "type": "TextBlock",
-                            "text": "`help`"
-                        }
-                    ]
-                },
-                {
-                    "type": "Column",
-                    "width": "stretch",
-                    "items": [
-                        {
-                            "type": "TextBlock",
-                            "text": "Open CSAP bot information."
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "ColumnSet",
-            "columns": [
-                {
-                    "type": "Column",
-                    "width": "120px",
-                    "items": [
-                        {
-                            "type": "TextBlock",
-                            "text": "`contact`"
-                        }
-                    ]
-                },
-                {
-                    "type": "Column",
-                    "width": "stretch",
-                    "items": [
-                        {
-                            "type": "TextBlock",
-                            "text": "Contact the team behind CSAP bot.",
-                            "wrap": true
-                        }
-                    ]
-                }
-            ]
-        },
-        {
             "type": "ActionSet",
-    "actions": [{"type": "Action.Submit",
-                         "title": "Subscribe",
-                         "data": "subscribe",
-                         "style": "positive",
-                         "id": "button1"
-                        },
-                        {"type": "Action.OpenUrl",
-                         "title": "More Info",
-                         "url": "https://cisco.sharepoint.com/sites/CSAPGlobal/SitePages/CSAP%20Live.aspx"
-                        },
-                        {"type": "Action.Submit",
-                         "title": "Unsubscribe",
-                         "data": "unsubscribe",
-                         "style": "positive",
-                         "id": "button3" 
-                        }
-                        ],
-            "horizontalAlignment": "Left"
+            "actions": [
+                {
+                    "type": "Action.ShowCard",
+                    "title": "View Commands",
+                    "card": {
+                        "type": "AdaptiveCard",
+                        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                        "body": [
+                            {
+                                "type": "TextBlock",
+                                "text": "🙋 **I understand the following commands:**",
+                                "spacing": "ExtraLarge"
+                            },
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "130px",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`subscribe`"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Subscribe to GoCSAP bot updates.",
+                                                "wrap": true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "130px",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`unsubscribe`"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Unsubscribe from GoCSAP bot updates."
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "130px",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`help`"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Open CSAP bot information."
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "130px",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`contact`"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Contact the team behind CSAP bot.",
+                                                "wrap": true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "130px",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`make admin`"
+                                            },
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "`make superadmin`",
+                                                "spacing": "None"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Submit a request for GoCSAP bot admin access. Followed by a Cisco email address when requesting for someone else.",
+                                                "wrap": true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ],
+            "spacing": "Small"
         }
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
