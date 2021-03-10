@@ -13,8 +13,10 @@ import time
 global greeting_card, help_card, approve_card, notif_card, send_card
 
 # fetch env variables
+bot_app_name = os.environ["BOT_NAME"]
 bot_token= os.environ["BOT_TOKEN"]
 bot_url= os.environ["BOT_URL"]
+bot_email = os.environ["BOT_EMAIL"]
 logs = os.environ["LOGFILE"]
 
 api = WebexTeamsAPI(bot_token)
