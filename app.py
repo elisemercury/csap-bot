@@ -1024,7 +1024,7 @@ help_card_admin = """
                             {{
                                 "type": "TextBlock",
                                 "text": "🔥 **I understand the following admin commands:**"
-                            },
+                            }},
                             {{
                                 "type": "ColumnSet",
                                 "columns": [
