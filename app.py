@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 from datetime import date, datetime
 import pickle
 import time
+import re
 
 global greeting_card, help_card, approve_card, notif_card, send_card
 
@@ -409,7 +410,7 @@ def unsubscribe(incoming_msg):
 
 def help(incoming_msg):
     if check_permission(email=incoming_msg.personEmail, level="superadmin") == "Authorized":
-        admin_info = "As superadmin you can send notifications to bot subscribers, view bot analytics and receive approval requests for new admin."
+        admin_info = "As superadmin you can send notifications to bot subscribers, view bot analytics and grant/revoke admin access."
         attachment = help_card_admin.format(level="superadmin", adminInfo=admin_info)
         backupmessage = "Hi there! 👋 The GoCSAP bot just sent some help."
 
@@ -866,7 +867,7 @@ help_card_admin = """
         }},
         {{
             "type": "TextBlock",
-            "text": "Your current GoCSAP bot access level: **{level}**. {adminInfo}",
+            "text": "Your current GoCSAP bot access level: **{level}**.       {adminInfo}",
             "wrap": true
         }},
         {{
