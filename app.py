@@ -418,7 +418,7 @@ def help(incoming_msg):
         )    
     elif check_permission(email=incoming_msg.personEmail) == "Authorized":
         admin_info = "As admin you can send notifications to bot subscribers and view bot analytics."
-        attachment = help_card_admin.format(level="admin", admin_info=admin_info)
+        attachment = help_card_admin.format(level="admin", adminInfo=admin_info)
         backupmessage = "Hi there! 👋 The GoCSAP bot just sent some help."
 
         c = create_message_with_attachment(
@@ -770,7 +770,7 @@ def joke(incoming_msg):
     time.sleep(1)
     return "😂"
 
-def logs(incoming_msg):
+def logfile(incoming_msg):
     reqEmail = incoming_msg.personEmail
     if check_permission(email=reqEmail, level="superadmin") == "Authorized":  
         log(incoming_msg, severity=2, personId=incoming_msg.personId, infoMsg="Logfile requested by superadmin.", personEmail=incoming_msg.personEmail)
@@ -794,7 +794,7 @@ bot.add_command("make admin", "make admin", request_admin_access)
 bot.add_command("make superadmin", "make superadmin", request_admin_access)
 bot.add_command("cancel admin", "cancel admin", cancel_admin_access)
 bot.add_command("analytics", "analytics", admin_analytics)
-bot.add_command("logfile", "logfile", logs)
+bot.add_command("logfile", "logfile", logfile)
 bot.add_command("joke", "joke", joke)
 
 
@@ -866,8 +866,7 @@ help_card_admin = """
         }},
         {{
             "type": "TextBlock",
-            "text": "Your current GoCSAP bot access level: **{level}**.
-             {adminInfo}",
+            "text": "Your current GoCSAP bot access level: **{level}**. {adminInfo}",
             "wrap": true
         }},
         {{
