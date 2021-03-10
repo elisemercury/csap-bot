@@ -770,7 +770,19 @@ def joke(incoming_msg):
     time.sleep(1)
     return "😂"
 
-                
+def logs(incoming_msg):
+    reqEmail = incoming_msg.personEmail
+    if check_permission(email=reqEmail, level="superadmin") == "Authorized":  
+        log(incoming_msg, severity=2, personId=personId, infoMsg="Logfile requested by superadmin.", personEmail=incoming_msg.personEmail)
+        text = "Please find the GoCSAP bot logfile attached."
+        api.messages.create(toPersonEmail=reqEmail, 
+                            text=text, files=['logs.txt'])    
+        return ""
+    else:
+        text = "You do not have permission to view the GoCSAP bot logfile. Please request superadmin acces by typing **make superadmin**."
+        log(incoming_msg, severity=3, personId=personId, infoMsg="Logfile requested without permission.", personEmail=incoming_msg.personEmail)
+        return text
+
 bot.set_greeting(greeting)
 bot.add_command("attachmentActions", "*", handle_cards)
 bot.add_command("help", "Help", help)
@@ -782,6 +794,7 @@ bot.add_command("make admin", "make admin", request_admin_access)
 bot.add_command("make superadmin", "make superadmin", request_admin_access)
 bot.add_command("cancel admin", "cancel admin", cancel_admin_access)
 bot.add_command("analytics", "analytics", admin_analytics)
+bot.add_command("logfile", "logfile", logs)
 bot.add_command("joke", "joke", joke)
 
 
