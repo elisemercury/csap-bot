@@ -1,7 +1,6 @@
 from webexteamssdk import WebexTeamsAPI
 import webexteamssdk
 from webexteamsbot import TeamsBot
-#import models
 import json
 import requests
 import os
@@ -11,32 +10,25 @@ from datetime import date, datetime
 import pickle
 import time
 
-#working
-bot_app_name = "GoCSAP"
-bot_token= "NTUxMGExNmItOTA2OC00YmI3LTkzOGUtZDJjNDY4MTc2MjZiZjMzMGU4YWUtMjQx_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
-bot_url= "https://csap-bot.herokuapp.com/"
-bot_email = "GoCSAP@webex.bot"
-subscriber_db = "subscribers.txt"
-logs = "logs.txt"
-
 global greeting_card, help_card, approve_card, notif_card, send_card
+
+# fetch env variables
+bot_token= os.environ["BOT_TOKEN"]
+bot_url= os.environ["BOT_URL"]
+logs = os.environ["LOGFILE"]
 
 api = WebexTeamsAPI(bot_token)
 
 webhook_list = []
 for webhook in api.webhooks.list():
     webhook_list.append(webhook.id)
-#print(webhook_list)
-
 
 for webhook in api.webhooks.list():
-    #print(webhook.id)
     if webhook.id != webhook_list[-2] and webhook.id != webhook_list[-1]:
         try:
             api.webhooks.delete(webhook.id)
         except:
             continue
-
 
 bot = TeamsBot(
     bot_app_name,
@@ -45,10 +37,9 @@ bot = TeamsBot(
     teams_bot_email=bot_email,
     webhook_resource_event=[
         {"resource": "messages", "event": "created"},
-        {"resource": "attachmentActions", "event": "created"},
-    ]
-)
+        {"resource": "attachmentActions", "event": "created"},])
 
+# actiavte database connection
 url = urlparse(os.environ['DATABASE_URL'])
 dbname = url.path[1:]
 user = url.username
