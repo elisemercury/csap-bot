@@ -354,11 +354,11 @@ def parse_msg(parse, roomId, review):
         c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
                                            attachment=json.loads(approve_card.format(msg_id=parse[12])))  
         print(10)
-        log(incoming_msg="", severity=1, personId=personId, infoMsg="Notification submitted and sent for review.")
+        log(incoming_msg="", severity=1, personId="", infoMsg="Notification submitted and sent for review.")
         
     else:
         c = create_message_with_attachment(roomId, msgtxt=backupmessage, attachment=json.loads(attachment))
-        log(incoming_msg="", severity=2, personId=personId, infoMsg="Notification submitted without review.")
+        log(incoming_msg="", severity=2, personId="", infoMsg="Notification submitted without review.")
         # change to bot subscribers
 
 def create_message_with_attachment(rid, msgtxt, attachment, toPersonEmail=""):
@@ -391,7 +391,7 @@ def subscribe(incoming_msg):
     try:
         cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
         con.commit()
-        log(incoming_msg, severity=0, personId="", infoMsg="Subscriber database updated.", personEmail=incoming_msg.personEmail)
+        log(incoming_msg, severity=0, personId=incoming_msg.personId, infoMsg="Subscriber database updated.", personEmail=incoming_msg.personEmail)
     except:
         print("Could not be added to DB")
         
@@ -404,7 +404,7 @@ def unsubscribe(incoming_msg):
     try:
         cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
         con.commit()
-        log(incoming_msg, severity=0, personId="", infoMsg="Subscriber database updated.", personEmail=incoming_msg.personEmail)
+        log(incoming_msg, severity=0, personId=incoming_msg.personId, infoMsg="Subscriber database updated.", personEmail=incoming_msg.personEmail)
     except:
         print("Could not be removed from DB")
     return "Thank you, you sucessfully unsubscribed from CSAP bot updates."  
@@ -746,7 +746,7 @@ def admin_analytics(incoming_msg):
 
         return ""       
     else:
-        log(incoming_msg, severity=2, personId=personId, infoMsg="Analytics requested without permission.", personEmail=incoming_msg.personEmail)
+        log(incoming_msg, severity=2, personId=incoming_msg.personId, infoMsg="Analytics requested without permission.", personEmail=incoming_msg.personEmail)
         text = "You do not have permission to view GoCSAP bot analytics. You can request admin access by typing **make admin**.".format(reqEmail)
         return text    
     
