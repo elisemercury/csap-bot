@@ -409,7 +409,7 @@ def unsubscribe(incoming_msg):
 
 def help(incoming_msg):
     if check_permission(email=incoming_msg.personEmail, level="superadmin") == "Authorized":
-        admin_info = "As superadmin you can send notifications to bot subscribers, view bot analytics and receive approval requests for new admin."
+        admin_info = "\nAs superadmin you can send notifications to bot subscribers, view bot analytics and receive approval requests for new admin."
         attachment = help_card_admin.format(level="superadmin", admin_info=admin_info)
         backupmessage = "Hi there! 👋 The GoCSAP bot just sent some help."
 
@@ -417,7 +417,7 @@ def help(incoming_msg):
             incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
         )    
     elif check_permission(email=incoming_msg.personEmail) == "Authorized":
-        admin_info = "As admin you can send notifications to bot subscribers and view bot analytics."
+        admin_info = "\nAs admin you can send notifications to bot subscribers and view bot analytics."
         attachment = help_card_admin.format(level="admin", admin_info=admin_info)
         backupmessage = "Hi there! 👋 The GoCSAP bot just sent some help."
 
@@ -1105,7 +1105,7 @@ help_card_admin = """
                     }}
                 }}
             ],
-            "spacing": "Small"
+            "spacing": "None"
         }}
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
