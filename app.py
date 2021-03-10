@@ -941,7 +941,7 @@ help_card_admin = """
                                         "items": [
                                             {{
                                                 "type": "TextBlock",
-                                                "text": "Open CSAP bot information."
+                                                "text": "Open GoCSAP bot information."
                                             }}
                                         ]
                                     }}
@@ -1726,7 +1726,7 @@ help_card = """
                                         "items": [
                                             {
                                                 "type": "TextBlock",
-                                                "text": "Open CSAP bot information."
+                                                "text": "Open GoCSAP bot information."
                                             }
                                         ]
                                     }
