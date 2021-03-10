@@ -409,15 +409,15 @@ def unsubscribe(incoming_msg):
 
 def help(incoming_msg):
     if check_permission(email=incoming_msg.personEmail, level="superadmin") == "Authorized":
-        admin_info = "\nAs superadmin you can send notifications to bot subscribers, view bot analytics and receive approval requests for new admin."
-        attachment = help_card_admin.format(level="superadmin", admin_info=admin_info)
+        admin_info = "As superadmin you can send notifications to bot subscribers, view bot analytics and receive approval requests for new admin."
+        attachment = help_card_admin.format(level="superadmin", adminInfo=admin_info)
         backupmessage = "Hi there! 👋 The GoCSAP bot just sent some help."
 
         c = create_message_with_attachment(
             incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
         )    
     elif check_permission(email=incoming_msg.personEmail) == "Authorized":
-        admin_info = "\nAs admin you can send notifications to bot subscribers and view bot analytics."
+        admin_info = "As admin you can send notifications to bot subscribers and view bot analytics."
         attachment = help_card_admin.format(level="admin", admin_info=admin_info)
         backupmessage = "Hi there! 👋 The GoCSAP bot just sent some help."
 
@@ -773,14 +773,14 @@ def joke(incoming_msg):
 def logs(incoming_msg):
     reqEmail = incoming_msg.personEmail
     if check_permission(email=reqEmail, level="superadmin") == "Authorized":  
-        log(incoming_msg, severity=2, personId=personId, infoMsg="Logfile requested by superadmin.", personEmail=incoming_msg.personEmail)
+        log(incoming_msg, severity=2, personId=incoming_msg.personId, infoMsg="Logfile requested by superadmin.", personEmail=incoming_msg.personEmail)
         text = "Please find the GoCSAP bot logfile attached."
         api.messages.create(toPersonEmail=reqEmail, 
                             text=text, files=['logs.txt'])    
         return ""
     else:
         text = "You do not have permission to view the GoCSAP bot logfile. Please request superadmin acces by typing **make superadmin**."
-        log(incoming_msg, severity=3, personId=personId, infoMsg="Logfile requested without permission.", personEmail=incoming_msg.personEmail)
+        log(incoming_msg, severity=3, personId=incoming_msg.personId, infoMsg="Logfile requested without permission.", personEmail=incoming_msg.personEmail)
         return text
 
 bot.set_greeting(greeting)
@@ -866,7 +866,8 @@ help_card_admin = """
         }},
         {{
             "type": "TextBlock",
-            "text": "Your current GoCSAP bot access level: **{level}**. {admin_info}",
+            "text": "Your current GoCSAP bot access level: **{level}**.
+             {adminInfo}",
             "wrap": true
         }},
         {{
