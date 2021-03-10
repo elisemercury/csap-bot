@@ -418,14 +418,20 @@ def unsubscribe(incoming_msg):
     return "Thank you, you sucessfully unsubscribed from CSAP bot updates."  
 
 def help(incoming_msg):
-    if check_permission(email=incoming_msg.personEmail) == "Authorized":
-        attachment = help_card_admin
+    if check_permission(email=incoming_msg.personEmail, level="superadmin") == "Authorized":
+        attachment = help_card_admin.format(level="superadmin")
         backupmessage = "Hi there! 👋 The GoCSAP bot just sent some help."
 
         c = create_message_with_attachment(
             incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
         )    
-      
+    elif check_permission(email=incoming_msg.personEmail) == "Authorized":
+        attachment = help_card_admin.format(level="admin")
+        backupmessage = "Hi there! 👋 The GoCSAP bot just sent some help."
+
+        c = create_message_with_attachment(
+            incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
+        )    
     else:
         attachment = help_card
         backupmessage = "Hi there! 👋 The GoCSAP bot just sent some help."
@@ -804,316 +810,316 @@ if __name__ == "__main__":
     bot.run()
 
 help_card_admin = """
-    {
+    {{
       "contentType": "application/vnd.microsoft.card.adaptive",
-      "content": {
+      "content": {{
     "type": "AdaptiveCard",
     "body": [
-        {
+        {{
             "type": "ColumnSet",
             "columns": [
-                {
+                {{
                     "type": "Column",
                     "items": [
-                        {
+                        {{
                             "type": "ColumnSet",
                             "columns": [
-                                {
+                                {{
                                     "type": "Column",
                                     "width": "stretch",
                                     "items": [
-                                        {
+                                        {{
                                             "type": "TextBlock",
                                             "text": "GoCSAP Bot",
                                             "weight": "Lighter",
                                             "color": "Accent"
-                                        },
-                                        {
+                                        }},
+                                        {{
                                             "type": "TextBlock",
                                             "weight": "Bolder",
-                                            "text": "Help",
+                                            "text": "Admin Help",
                                             "horizontalAlignment": "Left",
                                             "wrap": true,
                                             "color": "Light",
                                             "size": "Large",
                                             "spacing": "Small"
-                                        }
+                                        }}
                                     ],
                                     "verticalContentAlignment": "Center"
-                                }
+                                }}
                             ]
-                        }
+                        }}
                     ],
                     "width": "stretch"
-                }
+                }}
             ]
-        },
-        {
+        }},
+        {{
             "type": "TextBlock",
             "text": "Hello! 👋 I'm your GoCSAP bot. You can **subscribe** to receive updates and latest news from within the CSAP program.",
             "wrap": true
-        },
-        {
+        }},
+        {{
             "type": "TextBlock",
-            "text": "I was especially designed to keep you up to date on the most important topics around CSAP. ",
+            "text": "Your current GoCSAP bot access level: {level}.",
             "wrap": true
-        },
-        {
+        }},
+        {{
             "type": "ActionSet",
             "actions": [
-                {
+                {{
                     "type": "Action.ShowCard",
                     "title": "View Commands",
-                    "card": {
+                    "card": {{
                         "type": "AdaptiveCard",
                         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                         "body": [
-                            {
+                            {{
                                 "type": "TextBlock",
                                 "text": "🙋 **I understand the following commands:**",
                                 "spacing": "ExtraLarge"
-                            },
-                            {
+                            }},
+                            {{
                                 "type": "ColumnSet",
                                 "columns": [
-                                    {
+                                    {{
                                         "type": "Column",
                                         "width": "130px",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "`subscribe`"
-                                            }
+                                            }}
                                         ]
-                                    },
-                                    {
+                                    }},
+                                    {{
                                         "type": "Column",
                                         "width": "stretch",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "Subscribe to GoCSAP bot updates.",
                                                 "wrap": true
-                                            }
+                                            }}
                                         ]
-                                    }
+                                    }}
                                 ]
-                            },
-                            {
+                            }},
+                            {{
                                 "type": "ColumnSet",
                                 "columns": [
-                                    {
+                                    {{
                                         "type": "Column",
                                         "width": "130px",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "`unsubscribe`"
-                                            }
+                                            }}
                                         ]
-                                    },
-                                    {
+                                    }},
+                                    {{
                                         "type": "Column",
                                         "width": "stretch",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "Unsubscribe from GoCSAP bot updates."
-                                            }
+                                            }}
                                         ]
-                                    }
+                                    }}
                                 ]
-                            },
-                            {
+                            }},
+                            {{
                                 "type": "ColumnSet",
                                 "columns": [
-                                    {
+                                    {{
                                         "type": "Column",
                                         "width": "130px",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "`help`"
-                                            }
+                                            }}
                                         ]
-                                    },
-                                    {
+                                    }},
+                                    {{
                                         "type": "Column",
                                         "width": "stretch",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "Open CSAP bot information."
-                                            }
+                                            }}
                                         ]
-                                    }
+                                    }}
                                 ]
-                            },
-                            {
+                            }},
+                            {{
                                 "type": "ColumnSet",
                                 "columns": [
-                                    {
+                                    {{
                                         "type": "Column",
                                         "width": "130px",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "`contact`"
-                                            }
+                                            }}
                                         ]
-                                    },
-                                    {
+                                    }},
+                                    {{
                                         "type": "Column",
                                         "width": "stretch",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "Contact the team behind the GoCSAP bot.",
                                                 "wrap": true
-                                            }
+                                            }}
                                         ]
-                                    }
+                                    }}
                                 ]
-                            },
-                            {
+                            }},
+                            {{
                                 "type": "ColumnSet",
                                 "columns": [
-                                    {
+                                    {{
                                         "type": "Column",
                                         "width": "130px",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "`make admin`"
-                                            },
-                                            {
+                                            }},
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "`make superadmin`",
                                                 "spacing": "None"
-                                            }
+                                            }}
                                         ]
-                                    },
-                                    {
+                                    }},
+                                    {{
                                         "type": "Column",
                                         "width": "stretch",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "Submit a request for GoCSAP bot admin access. Followed by a Cisco email address when requesting for someone else.",
                                                 "wrap": true
-                                            }
+                                            }}
                                         ]
-                                    }
+                                    }}
                                 ]
-                            }
+                            }}
                         ]
-                    }
-                }
+                    }}
+                }}
             ],
             "spacing": "Small"
-        },
-        {
+        }},
+        {{
             "type": "ActionSet",
             "actions": [
-                {
+                {{
                     "type": "Action.ShowCard",
                     "title": "View Admin Commands",
-                    "card": {
+                    "card": {{
                         "type": "AdaptiveCard",
                         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                         "body": [
-                            {
+                            {{
                                 "type": "TextBlock",
                                 "text": "🔥 **I understand the following admin commands:**"
                             },
-                            {
+                            {{
                                 "type": "ColumnSet",
                                 "columns": [
-                                    {
+                                    {{
                                         "type": "Column",
                                         "width": "130px",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "`send notif`"
-                                            }
+                                            }}
                                         ]
-                                    },
-                                    {
+                                    }},
+                                    {{
                                         "type": "Column",
                                         "width": "stretch",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "Submit a notification to be sent to all GoCSAP bot subscribers.",
                                                 "wrap": true
-                                            }
+                                            }}
                                         ]
-                                    }
+                                    }}
                                 ]
-                            },
-                            {
+                            }},
+                            {{
                                 "type": "ColumnSet",
                                 "columns": [
-                                    {
+                                    {{
                                         "type": "Column",
                                         "width": "130px",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "`analytics`"
-                                            }
+                                            }}
                                         ]
-                                    },
-                                    {
+                                    }},
+                                    {{
                                         "type": "Column",
                                         "width": "auto",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "Request GoCSAP bot analytics."
-                                            }
+                                            }}
                                         ]
-                                    }
+                                    }}
                                 ]
-                            },
-                            {
+                            }},
+                            {{
                                 "type": "ColumnSet",
                                 "columns": [
-                                    {
+                                    {{
                                         "type": "Column",
                                         "width": "130px",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "`cancel admin`"
-                                            }
+                                            }}
                                         ]
-                                    },
-                                    {
+                                    }},
+                                    {{
                                         "type": "Column",
                                         "width": "stretch",
                                         "items": [
-                                            {
+                                            {{
                                                 "type": "TextBlock",
                                                 "text": "Revoke all admin rights. Followed by a Cisco email address when revoking for someone else (only superadmins can revoke for someone else).",
                                                 "wrap": true
-                                            }
+                                            }}
                                         ]
-                                    }
+                                    }}
                                 ]
-                            }
+                            }}
                         ]
-                    }
-                }
+                    }}
+                }}
             ],
             "spacing": "Small"
-        }
+        }}
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
     "version": "1.2"
-}
-    }
+}}
+    }}
   """
 
 approve_card = """
