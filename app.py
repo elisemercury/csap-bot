@@ -10,6 +10,7 @@ from datetime import date, datetime
 import pickle
 import time
 import re
+import xlsxwriter
 
 global greeting_card, help_card, approve_card, notif_card, send_card
 
@@ -737,11 +738,12 @@ def admin_analytics(incoming_msg):
                                            nr_admins=nr_admins, nr_superadmins=nr_superadmins)
         backupmessage = "Hi admin! 👋 Here are the GoCSAP bot analytics you requested."
 
+        log(incoming_msg, severity=1, personId=personId, infoMsg="Analytics requested with success.", personEmail=incoming_msg.personEmail)
+
         c = create_message_with_attachment(
             incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
         )    
 
-        log(incoming_msg, severity=1, personId=personId, infoMsg="Analytics requested with success.", personEmail=incoming_msg.personEmail)
         return ""       
     else:
         log(incoming_msg, severity=2, personId=personId, infoMsg="Analytics requested without permission.", personEmail=incoming_msg.personEmail)
