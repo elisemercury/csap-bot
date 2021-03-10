@@ -738,7 +738,7 @@ def admin_analytics(incoming_msg):
                                            nr_admins=nr_admins, nr_superadmins=nr_superadmins)
         backupmessage = "Hi admin! 👋 Here are the GoCSAP bot analytics you requested."
 
-        log(incoming_msg, severity=1, personId=personId, infoMsg="Analytics requested with success.", personEmail=incoming_msg.personEmail)
+        log(incoming_msg, severity=1, personId=incoming_msg.personId, infoMsg="Analytics requested with success.", personEmail=incoming_msg.personEmail)
 
         c = create_message_with_attachment(
             incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
@@ -869,7 +869,7 @@ help_card_admin = """
         }},
         {{
             "type": "TextBlock",
-            "text": "Your current GoCSAP bot access level: **{level}**.       {adminInfo}",
+            "text": "Your current GoCSAP bot access level: **{level}**. {adminInfo}",
             "wrap": true
         }},
         {{
