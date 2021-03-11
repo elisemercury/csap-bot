@@ -2073,8 +2073,8 @@ send_notif = """
                                 {
                                     "type": "Action.Submit",
                                     "title": "Submit Notification",
-                                    "id": "submit",
-                                    "data": "submit_notif_1"
+                                    "id": "submit"
+                                    
                                 }
                             ],
                             "horizontalAlignment": "Center",
