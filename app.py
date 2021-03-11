@@ -500,7 +500,7 @@ def log(severity, personId="", infoMsg="", personEmail = ""):
                      "personEmail": personEmail,
                      "personId": personId}
     
-    with open(logs, 'a') as outfile:
+    with open(logs, 'w') as outfile:
         json.dump(data, outfile)    
 
 def check_permission(personId="", email="", level="admin"):
