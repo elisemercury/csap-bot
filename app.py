@@ -437,7 +437,7 @@ def subscribe(incoming_msg):
     
     request = (incoming_msg.text).split(" ")
     # if the command doesnt start with un, subscribe the user
-    if request[1][0:2] != "un":
+    if (len(request) > 1 and request[1][0:2] != "un") or request[0:2] != "un":
         try:
             cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
             con.commit()
