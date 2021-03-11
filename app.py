@@ -828,7 +828,6 @@ bot.add_command("analytics", "analytics", admin_analytics)
 bot.add_command("logfile", "logfile", logfile)
 bot.add_command("joke", "joke", joke)
 
-
 if __name__ == "__main__":
 
     webhook_list = []
@@ -962,7 +961,8 @@ help_card_admin = """
                                         "items": [
                                             {{
                                                 "type": "TextBlock",
-                                                "text": "Unsubscribe from GoCSAP bot updates."
+                                                "text": "Unsubscribe from GoCSAP bot updates.",
+                                                "wrap": true
                                             }}
                                         ]
                                     }}
@@ -987,7 +987,8 @@ help_card_admin = """
                                         "items": [
                                             {{
                                                 "type": "TextBlock",
-                                                "text": "Open GoCSAP bot information."
+                                                "text": "Open GoCSAP bot information.",
+                                                "wrap": true
                                             }}
                                         ]
                                     }}
@@ -1115,7 +1116,8 @@ help_card_admin = """
                                         "items": [
                                             {{
                                                 "type": "TextBlock",
-                                                "text": "Request GoCSAP bot analytics."
+                                                "text": "Request GoCSAP bot analytics.",
+                                                "wrap": true
                                             }}
                                         ]
                                     }}
@@ -1747,7 +1749,8 @@ help_card = """
                                         "items": [
                                             {
                                                 "type": "TextBlock",
-                                                "text": "Unsubscribe from GoCSAP bot updates."
+                                                "text": "Unsubscribe from GoCSAP bot updates.",
+                                                "wrap": true
                                             }
                                         ]
                                     }
@@ -1772,7 +1775,8 @@ help_card = """
                                         "items": [
                                             {
                                                 "type": "TextBlock",
-                                                "text": "Open GoCSAP bot information."
+                                                "text": "Open GoCSAP bot information.",
+                                                "wrap": true
                                             }
                                         ]
                                     }
