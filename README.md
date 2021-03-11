@@ -16,7 +16,7 @@ Benefits:
 * Consistent design
 * Pre-formatted layouts
 * No mailerlists
-* Easily retrievable from wihtin the Webex App
+* Easily retrievable from within the Webex App
 * with a small touch of innovation :smirk:
 
 ## Bot Usage
