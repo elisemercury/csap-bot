@@ -66,6 +66,9 @@ def greeting(incoming_msg):
     attachment = greeting_card #.format ### card message
     backupmessage = "Hi there! 👋 It's nice to meet you."
 
+    reqEmail = incoming_msg.personEmail
+    print(reqEmail + ": " + check_permission(email=reqEmail))
+
     c = create_message_with_attachment(
         incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
     )
