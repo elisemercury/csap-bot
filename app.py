@@ -452,15 +452,20 @@ def fetch_infos(incoming_msg):
     return sender, firstName, room, roomId, email, personId
 
 def send_notif(incoming_msg):
-    person = bot.teams.people.get(incoming_msg.personId)
-    personId = person.id
-    attachment = send_card
-    backupmessage = "Hi there! 👋 You requested to create a notification through the GoCSAP bot."
+    if check_permission(email=incoming_msg.personEmail) == "Authorized":
+        person = bot.teams.people.get(incoming_msg.personId)
+        personId = person.id
+        attachment = send_card
+        backupmessage = "Hi there! 👋 You requested to create a notification through the GoCSAP bot."
 
-    c = create_message_with_attachment(incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment))  
-    log(incoming_msg, severity=1, personId=personId, infoMsg="Notification request made.", personEmail=incoming_msg.personEmail)
-    
-    return ""   
+        c = create_message_with_attachment(incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment))  
+        log(incoming_msg, severity=1, personId=personId, infoMsg="Notification request made.", personEmail=incoming_msg.personEmail)
+        
+        return ""   
+    else:
+        log(incoming_msg, severity=2, personId=incoming_msg.personId, infoMsg="Analytics requested without permission.", personEmail=incoming_msg.personEmail)
+        text = "You do not have permission to send notifications via the GoCSAP bot. You can request admin access by typing **make admin**."
+        return text
 
 def log(incoming_msg, severity, personId, infoMsg="", personEmail = ""):
     # function for logging al things sent with the bot
@@ -656,7 +661,7 @@ def request_admin_access(incoming_msg):
                 return "Oops, something went wrong 😢"
 
         else:
-            text = "Your email address is invalid. Admin rights are reserved for Cisco employees with a valid email address only."
+            text = "Admin rights are reserved for Cisco employees with a valid Cisco email address only."
             return text
 
 def cancel_admin_access(incoming_msg):
@@ -869,7 +874,12 @@ help_card_admin = """
         }},
         {{
             "type": "TextBlock",
-            "text": "Your current GoCSAP bot access level: **{level}**. {adminInfo}",
+            "text": "Your current GoCSAP bot access level: **{level}**.",
+            "wrap": true
+        }},
+        {{
+            "type": "TextBlock",
+            "text": "{adminInfo}",
             "wrap": true
         }},
         {{
@@ -1552,12 +1562,12 @@ greeting_card = """
         },
         {
             "type": "TextBlock",
-            "text": "Hello, I'm your CSAP bot. You can **subscribe** to receive updates and latest news from within the CSAP program!",
+            "text": "Hello, I'm your GoCSAP bot. You can **subscribe** to receive updates and latest news from within the CSAP program!",
             "wrap": true
         },
         {
             "type": "TextBlock",
-            "text": "📋 **CSAP bot content includes:**",
+            "text": "📋 **GoCSAP bot content includes:**",
             "spacing": "ExtraLarge"
         },
         {
