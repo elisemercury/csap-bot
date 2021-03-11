@@ -428,7 +428,7 @@ def subscribe(incoming_msg):
         except:
             print("Could not be removed from DB")
         return "Thank you, you successfully unsubscribed from CSAP bot updates. 😢"  
-
+ 
 def help(incoming_msg):
     if check_permission(email=incoming_msg.personEmail, level="superadmin") == "Authorized":
         admin_info = "As superadmin you can send notifications to bot subscribers, view bot analytics and grant/revoke admin access."
