@@ -9,14 +9,14 @@ You can subscribe to the bot by contacting GoCSAP@webex.bot in the Webex App and
 
 ## Bot Idea
 
-In times like these, where programmability is on the top priority list of most IT companies - why make use of good only mailerlists, when you can broadcast notifications via a Webex bot? 
+In times like these, where programmability is on the top priority list of most IT companies - why make use of old-fashioned mailerlists, when you can broadcast notifications via a Webex bot? 
 The GoCSAP bot is an improved replacement for emails.
 
 Benefits:
 * Consistent design
 * Pre-formatted layouts
 * No mailerlists
-* Easily retrievable from wihtin the Webex App
+* Easily retrievable from within the Webex App
 * with a small touch of innovation :smirk:
 
 ## Bot Usage
