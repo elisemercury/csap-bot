@@ -480,12 +480,12 @@ def send_notif(incoming_msg):
     if check_permission(email=incoming_msg.personEmail) == "Authorized":
         request = (incoming_msg.text).split(" ")
         if len(request) > 2:
-            if request == "1":
+            if request[2] == "1":
                 template = send_notif
-            elif request == "2":
+            elif request[2] == "2":
                 template = send_notif_2
             else:
-                text = "Oops, I do not support template {} yet. I currently support {} templates. Please adjust your choice to one of these.".format(request, "2")
+                text = "Oops, I do not support template {} yet. I currently support {} templates. Please adjust your choice to one of these.".format(request[2], "2")
                 return text
         else:
             template = send_notif
