@@ -84,45 +84,43 @@ def handle_cards(api, incoming_msg):
     if m["inputs"] == "subscribe":
         try:
             cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
-            con.commit()
-            # update log
             log(severity=0, infoMsg="Subscriber database updated.", personId=personId)
             # send success message
             text="Thank you, you successfully subscribed to GoCSAP bot updates. 🥳"
-            api.messages.create(roomId=roomId, text=text)    
-            # delete card
-            api.messages.delete(messageId=m["messageId"])  
+            api.messages.create(roomId=roomId, text=text)  
             return ""
         except:
-            # delete card
+            con.rollback()
+        finally:
+            con.commit()
             api.messages.delete(messageId=m["messageId"])  
             return "Thank you, you sucessfully subscribed to GoCSAP bot updates. 🥳"
             
     elif m["inputs"] == "unsubscribe":    
         try:
             cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
-            con.commit()
             log(severity=0, infoMsg="Subscriber database updated.", personId=personId)
             # send success message
             text="Thank you, you successfully unsubscribed from GoCSAP bot updates."
             api.messages.create(roomId=roomId, text=text)    
-            # delete card
-            api.messages.delete(messageId=m["messageId"])    
             return ""
-        except:
+        except:  
+            con.rollback()
+        finally:
+            con.commit() 
             # delete card
             api.messages.delete(messageId=m["messageId"]) 
             return "Thank you, you successfully unsubscribed from GoCSAP bot updates."
 
-    elif "submit_notif_1" in str(m["inputs"]):
-        
+    #elif "submit_notif_1" in str(m["inputs"]):
+    elif "{'textbox_1_card_1':" in str(m["inputs"]):    
         log(severity=1, infoMsg="New notification submitted.", personId=personId)
         
         parse = []
         image_url = m["inputs"]["image_url"]
         small_title = m["inputs"]["small_title"]
         main_title = m["inputs"]["main_title"]
-        textbox_1 = m["inputs"]["textbox_1"]
+        textbox_1 = m["inputs"]["textbox_1_card_1"]
         textbox_2 = m["inputs"]["textbox_2"]
         textbox_3 = m["inputs"]["textbox_3"]
         button1_text = m["inputs"]["button1_text"]
@@ -150,17 +148,17 @@ def handle_cards(api, incoming_msg):
             if element == "" or element == " ":
                 return "Oops, it seems like you didn't fill out all required fields. Please verify your entries and re-submit the notification."
 
-        parse_msg(parse, roomId, review, template="1")
+        parse_msg(incoming_msg, parse, roomId, review, template="1")
 
         return ""
 
-    elif "submit_notif_2" in str(m["inputs"]):
+    elif "{'textbox_1_card_2':" in str(m["inputs"]):
         
         log(severity=1, infoMsg="New notification submitted.", personId=personId)
         
         parse = []
         main_title = m["inputs"]["main_title"]
-        textbox_1 = m["inputs"]["textbox_1"]
+        textbox_1 = m["inputs"]["textbox_1_card_2"]
         review = m["inputs"]["review"]   
 
         parse.extend([main_title, textbox_1])
@@ -169,9 +167,11 @@ def handle_cards(api, incoming_msg):
             if element == "" or element == " ":
                 return "Oops, it seems like you didn't fill out all required fields. Please verify your entries and re-submit the notification."
 
-        parse_msg(parse, roomId, review, template="2")
+        parse_msg(incoming_msg, parse, roomId, review, template="2")
 
         return ""
+    
+    ### add new template here
 
     elif m["inputs"] == "approve_msg":
         with open('parse.pkl', 'rb') as f:
@@ -179,15 +179,21 @@ def handle_cards(api, incoming_msg):
 
         # check if message approval comes from same room, so no confusion in case multiple people use bot
         # at the same time
-        if roomId == parse[13]:
-            attachment = notif_card.format(image_url=parse[0], small_title=parse[1], main_title=parse[2], 
-                                   textbox_1=parse[3], textbox_2=parse[4], textbox_3=parse[5], 
-                                   button1_text=parse[6], button2_text=parse[7], button3_text=parse[8], 
-                                   button1_url=parse[9], button2_url=parse[10], button3_url=parse[11],
-                                   msg_id=parse[12], isVisible="false")
+        if roomId == parse[-2]:
+            # check which template has been chosen
+            if parse[-1] == "1":
+                attachment = notif_card_1.format(image_url=parse[0], small_title=parse[1], main_title=parse[2], 
+                                          textbox_1=parse[3], textbox_2=parse[4], textbox_3=parse[5], 
+                                          button1_text=parse[6], button2_text=parse[7], button3_text=parse[8], 
+                                          button1_url=parse[9], button2_url=parse[10], button3_url=parse[11],
+                                          msg_id=parse[12], isVisible="false")
+            elif parse[-1] == "2":
+                attachment = notif_card_2.format(main_title=parse[0], textbox_1=parse[1], 
+                                                 msg_id=parse[2], isVisible="false")
             backupmessage = "Hi there! 👋 The GoCSAP bot just sent you a card."
             
-            text="Notification {} was approved and sent to bot subscribers! 🎉".format(parse[12])
+            
+            text="Notification {} was approved and sent to bot subscribers! 🎉".format(parse[-3])
             api.messages.create(roomId=roomId, 
                                  text=text)    
 
@@ -230,18 +236,22 @@ def handle_cards(api, incoming_msg):
                 api.messages.delete(messageId=m["messageId"])    
                 return text
             else:
-                cur.execute("""INSERT INTO admins (email, personid, since, role) VALUES (%s, %s, %s, %s)""", (requestor, "", date.today().strftime("%d%m%Y"), "admin"))
-                con.commit()
+                try:
+                    cur.execute("""INSERT INTO admins (email, personid, since, role) VALUES (%s, %s, %s, %s)""", (requestor, "", date.today().strftime("%d%m%Y"), "admin"))
+                    log(severity=2, infoMsg="New admin added: {}.".format(requestor), personId=personId)
+                    text="Hurray, you are now registered as an **admin** for the GoCSAP bot! 🎉 \nYou can now type **send notif** to submit notifications and type **analytics** to view GoCSAP bot analytics"
+                    api.messages.create(toPersonEmail=requestor, 
+                                        markdown=text)    
                 
-                log(severity=2, infoMsg="New admin added: {}.".format(requestor), personId=personId)  
-                
-                text="Hurray, you are now registered as an **admin** for the GoCSAP bot! 🎉 \nYou can now type **send notif** to submit notifications and type **analytics** to view GoCSAP bot analytics"
-                api.messages.create(toPersonEmail=requestor, 
-                                     markdown=text)    
-                
-                api.messages.delete(messageId=m["messageId"])  
-                text = "Thank you, {} is now an admin for the GoCSAP bot.".format(requestor)
-                return text
+                    api.messages.delete(messageId=m["messageId"])  
+                    text = "Thank you, {} is now an admin for the GoCSAP bot.".format(requestor)
+                except:
+                    cur.rollback()
+                    log(severity=3, infoMsg="Failed to update database of admins: {}.".format(requestor), personId=personId)  
+                    text = ""
+                finally:
+                    con.commit()
+                    return text
             
         if level == "superadmin":
             if check_permission(email=requestor, level="superadmin") == "Authorized":
@@ -249,18 +259,22 @@ def handle_cards(api, incoming_msg):
                 api.messages.delete(messageId=m["messageId"])    
                 return text
             else:
-                cur.execute("""INSERT INTO admins (email, personid, since, role) VALUES (%s, %s, %s, %s)""", (requestor, "", date.today().strftime("%d%m%Y"), "superadmin"))
-                con.commit()
-                
-                log(severity=2, infoMsg="New superadmin added: {}.".format(requestor), personId=personId)  
-                
-                text="Hurray, you are now registered as a **superadmin** for the GoCSAP bot! 🎉 \nYou can now type **send notif** to submit notifications, type **analytics** to view GoCSAP bot analytics and receive requests for approving new admins."
-                api.messages.create(toPersonEmail=requestor, 
+                try:
+                    cur.execute("""INSERT INTO admins (email, personid, since, role) VALUES (%s, %s, %s, %s)""", (requestor, "", date.today().strftime("%d%m%Y"), "superadmin"))
+                    log(severity=2, infoMsg="New superadmin added: {}.".format(requestor), personId=personId)
+                    text="Hurray, you are now registered as a **superadmin** for the GoCSAP bot! 🎉 \nYou can now type **send notif** to submit notifications, type **analytics** to view GoCSAP bot analytics and receive requests for approving new admins."
+                    api.messages.create(toPersonEmail=requestor, 
                                      markdown=text)    
                 
-                api.messages.delete(messageId=m["messageId"])  
-                text = "Thank you, {} is now a superadmin for the GoCSAP bot.".format(requestor)
-                return text            
+                    api.messages.delete(messageId=m["messageId"])  
+                    text = "Thank you, {} is now a superadmin for the GoCSAP bot.".format(requestor)
+                except:
+                    cur.rollback()
+                    log(severity=3, infoMsg="Failed to update database of admins: {}.".format(requestor), personId=personId)
+                    text = ""
+                finally:
+                    con.commit()
+                    return text
 
     elif "decline_admin" in m["inputs"]:
         requestor = m["inputs"].split(" ")[1]
@@ -360,52 +374,69 @@ def handle_cards(api, incoming_msg):
         return ""
            
     api.messages.delete(messageId=m["messageId"])
-    log(incoming_msg, severity=3, personId=personId, infoMsg="Faulty command. Please review: "+str(m["inputs"]))
-    return "Sorry, I do not understand the command {} yet.".format(firstName, m["inputs"])    
+    print(m)
+    log(severity=3, personId=personId, infoMsg="Faulty command. Please review: "+str(m["inputs"]))
+    return "Sorry, I do not understand the command {} yet.".format(m["inputs"])    
 
-def parse_msg(parse, roomId, review, template):
+def parse_msg(incoming_msg, parse, roomId, review, template):
     now = datetime.now()
     msg_id = now.strftime("%d%m%Y-%H%M")
     
-    parse.extend([msg_id, roomId])
-
-    if template == "1":
-
-        attachment = notif_card.format(image_url=parse[0], small_title=parse[1], main_title=parse[2], 
-                                    textbox_1=parse[3], textbox_2=parse[4], textbox_3=parse[5], 
-                                    button1_text=parse[6], button2_text=parse[7], button3_text=parse[8], 
-                                    button1_url=parse[9], button2_url=parse[10], button3_url=parse[11],
-                                    msg_id=parse[12], isVisible="true")   
-    elif template == "2":
-        attachment = notif_card.format(main_title=parse[0], textbox_1=parse[1], 
-                                       msg_id=parse[2], isVisible="true")          
-
-    backupmessage = "Hi there! 👋 The GoCSAP bot just sent you a card."
+    parse.extend([msg_id, roomId, template])
     
+    backupmessage = "Hi there! 👋 The GoCSAP bot just sent you a card."
     if str(review) == "true":
+        isVisible = "true"
+        if template == "1":
+            attachment = notif_card_1.format(image_url=parse[0], small_title=parse[1], main_title=parse[2], 
+                                        textbox_1=parse[3], textbox_2=parse[4], textbox_3=parse[5], 
+                                        button1_text=parse[6], button2_text=parse[7], button3_text=parse[8], 
+                                        button1_url=parse[9], button2_url=parse[10], button3_url=parse[11],
+                                        msg_id=parse[12], isVisible=isVisible)   
+        elif template == "2":
+            attachment = notif_card_2.format(main_title=parse[0], textbox_1=parse[1], 
+                                           msg_id=parse[2], isVisible=isVisible)          
 
-        with open('parse.pkl', 'wb') as f:
-            pickle.dump(parse, f)
-        c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
-                                           attachment=json.loads(attachment))                                       
-         
-        c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
-                                           attachment=json.loads(approve_card.format(msg_id=parse[12])))  
+            with open('parse.pkl', 'wb') as f:
+                pickle.dump(parse, f)
+            # send card to revie
+            c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
+                                               attachment=json.loads(attachment))                                       
+            # send card for approving
+            c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
+                                               attachment=json.loads(approve_card.format(msg_id=msg_id)))  
 
-        log(severity=1, infoMsg="Notification submitted and sent for review.", personId=personId)
+            log(severity=1, infoMsg="Notification submitted and sent for review.", personId=personId)
+        
+        ### add new templates here
         
     else:
+        isVisible = "false"
+        if template == "1":
+            attachment = notif_card_1.format(image_url=parse[0], small_title=parse[1], main_title=parse[2], 
+                                        textbox_1=parse[3], textbox_2=parse[4], textbox_3=parse[5], 
+                                        button1_text=parse[6], button2_text=parse[7], button3_text=parse[8], 
+                                        button1_url=parse[9], button2_url=parse[10], button3_url=parse[11],
+                                        msg_id=parse[12], isVisible=isVisible)   
+        elif template == "2":
+            attachment = notif_card_2.format(main_title=parse[0], textbox_1=parse[1], 
+                                           msg_id=parse[2], isVisible=isVisible)  
+            
+        ### add new templates here
+            
         cur.execute("""SELECT roomId FROM subscribers;""")
         result = cur.fetchall()
         for element in result:
-            for roomId in element:
+            for subscriberRoomId in element:
                 c = create_message_with_attachment(
-                    roomId, msgtxt=backupmessage, attachment=json.loads(attachment)) 
+                    subscriberRoomId, msgtxt=backupmessage, attachment=json.loads(attachment)) 
 
         log(severity=2, infoMsg="Notification sent without review.", personId=personId)
         
-        text = "Notification {} was approved and sent to bot subscribers! 🎉".format(msg_id)
-        return text
+        m = get_attachment_actions(incoming_msg["data"]["id"])
+        api.messages.delete(messageId=m["messageId"]) 
+        text = "Notification {} was sent to bot subscribers! 🎉".format(msg_id)
+        api.messages.create(roomId, text=text)  
 
 def create_message_with_attachment(rid, msgtxt, attachment, toPersonEmail=""):
     headers = {
@@ -436,26 +467,35 @@ def subscribe(incoming_msg):
     db_entry = roomId
     
     request = (incoming_msg.text).split(" ")
+    if "GoCSAP" in request:
+        request.remove("GoCSAP")
     # if the command doesnt start with un, subscribe the user
-    if (len(request) > 1 and request[1][0:2] != "un") or request[0][0:2] != "un":
+    if request[0][0:2] != "un":
         try:
             cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
-            con.commit()
             log(severity=0, infoMsg="Subscriber database updated.", personEmail=incoming_msg.personEmail)
+            print("Added tp DB")
         except:
-            print("Could not be added to DB")
-
+            con.rollback()
+            log(severity=3, infoMsg="Failed to update database of subscribers.", personId=personId)  
+            print("could not be added to db")
+        finally:
+            con.commit()
         return "Thank you, you successfully subscribed to CSAP bot updates. 🥳"
     # if it starts with un, then unsubscribe the user
     else:
         try:
             cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
-            con.commit()
-            log(severity=0, infoMsg="Subscriber database updated.", personEmail=incoming_msg.personEmail)
+            log(severity=0, infoMsg="Subscriber database updated.", personEmail=incoming_msg.personEmail) 
+            print("Removed from DB")
         except:
-            print("Could not be removed from DB")
+            con.rollback()
+            log(severity=3, infoMsg="Failed to update database of subscribers.", personId=personId)
+            print("Could not be removed from DB")   
+        finally:
+            con.commit()
         return "Thank you, you successfully unsubscribed from CSAP bot updates. 😢"  
- 
+
 def help(incoming_msg):
     if check_permission(email=incoming_msg.personEmail, level="superadmin") == "Authorized":
         admin_info = "As superadmin you can send notifications to bot subscribers, view bot analytics and grant/revoke admin access."
@@ -501,16 +541,21 @@ def fetch_infos(incoming_msg):
 def send_notif(incoming_msg):
     if check_permission(email=incoming_msg.personEmail) == "Authorized":
         request = (incoming_msg.text).split(" ")
+        
+        if "GoCSAP" in request:
+            request.remove("GoCSAP")
+        
         if len(request) > 2:
             if request[2] == "1":
-                template = send_notif
+                template = send_notif_template_1
             elif request[2] == "2":
-                template = send_notif_2
+                template = send_notif_template_2
+            ### add new templates here
             else:
                 text = "Oops, I do not support template {} yet. I currently support {} templates. Please adjust your choice to one of these.".format(request[2], "2")
                 return text
         else:
-            template = send_notif
+            template = send_notif_template_1
 
         person = bot.teams.people.get(incoming_msg.personId)
         personId = person.id
@@ -543,47 +588,47 @@ def log(severity, personId="", infoMsg="", personEmail = ""):
         json.dump(data, outfile)    
 
 def check_permission(personId="", email="", level="admin"):
-    try:
-        if personId != "":
-            if level == "superadmin":
-                cur.execute("""SELECT personid FROM admins WHERE role='superadmin';""")
-                superAdminList = cur.fetchall()            
-                for elements in superAdminList:
-                    for superAdmin in elements:
-                        if personId == superAdmin:
-                            return "Authorized"
-                return "Unauthorized"
-            else:
-                cur.execute("""SELECT personid FROM admins;""")
-                adminList = cur.fetchall()
-                for elements in adminList:
-                    for admin in elements:
-                        if personId == admin:
-                            return "Authorized"
-                return "Unauthorized"  
-
-        elif email != "":
-            if level == "superadmin":
-                cur.execute("""SELECT email FROM admins WHERE role='superadmin';""")
-                superAdminList = cur.fetchall()            
-                for elements in superAdminList:
-                    for superAdmin in elements:
-                        if email == superAdmin:
-                            return "Authorized"
-                return "Unauthorized"
-            else:
-                cur.execute("""SELECT email FROM admins;""")
-                adminList = cur.fetchall()
-                for elements in adminList:
-                    for admin in elements:
-                        if email == admin:
-                            return "Authorized"
-                return "Unauthorized"            
+    #try:
+    if personId != "":
+        if level == "superadmin":
+            cur.execute("""SELECT personid FROM admins WHERE role='superadmin';""")
+            superAdminList = cur.fetchall()            
+            for elements in superAdminList:
+                for superAdmin in elements:
+                    if personId == superAdmin:
+                        return "Authorized"
+            return "Unauthorized"
         else:
-            return "Unauthorized"    
-    except:
-        text = "Oops, your access level could not be verified. Please contact a GoCSAP superadmin or elandman@cisco.com."
-        return text
+            cur.execute("""SELECT personid FROM admins;""")
+            adminList = cur.fetchall()
+            for elements in adminList:
+                for admin in elements:
+                    if personId == admin:
+                        return "Authorized"
+            return "Unauthorized"  
+
+    elif email != "":
+        if level == "superadmin":
+            cur.execute("""SELECT email FROM admins WHERE role='superadmin';""")
+            superAdminList = cur.fetchall()            
+            for elements in superAdminList:
+                for superAdmin in elements:
+                    if email == superAdmin:
+                        return "Authorized"
+            return "Unauthorized"
+        else:
+            cur.execute("""SELECT email FROM admins;""")
+            adminList = cur.fetchall()
+            for elements in adminList:
+                for admin in elements:
+                    if email == admin:
+                        return "Authorized"
+            return "Unauthorized"            
+    else:
+        return "Unauthorized"    
+    #except:
+        #text = "Oops, your access level could not be verified. Please contact a GoCSAP superadmin or elandman@cisco.com."
+        #return text
     
 def valid_email(email):  
     if(re.search('^[a-z0-9]+[\._]?[a-z0-9]+[@]cisco[.]\w{2,3}$', email)):  
@@ -593,8 +638,11 @@ def valid_email(email):
         return "invalid" 
     
 def request_admin_access(incoming_msg):
-    request = incoming_msg.text
+    request = (incoming_msg.text).split(" ")
     request = request.split(" ")
+
+    if "GoCSAP" in request:
+        request.remove("GoCSAP")
     
     # request for someone else
     if len(request) > 2:
@@ -729,8 +777,10 @@ def request_admin_access(incoming_msg):
             return text
 
 def cancel_admin_access(incoming_msg):
-    request = incoming_msg.text
-    request = request.split(" ")
+    request = (incoming_msg.text).split(" ")
+    
+    if "GoCSAP" in request:
+        request.remove("GoCSAP")
 
     # check if this is the last superadmin in the DB
     cur.execute("""SELECT email FROM admins WHERE role='superadmin';""")
@@ -1250,7 +1300,7 @@ approve_card = """
     "version": "1.2"
 }}
     }}
-  """ #.format(test="ALOHA")
+  """
 
 analytics_card = """
     {{
@@ -1356,7 +1406,7 @@ analytics_card = """
     "version": "1.2"
 }}
     }}
-  """ #.format(test="ALOHA")
+  """
 
 request_admin_card = """
     {{
@@ -1449,7 +1499,7 @@ request_admin_card = """
 }}
     }}
   """
-
+# final notification which will be sent
 notif_card_1 = """
     {{
       "contentType": "application/vnd.microsoft.card.adaptive",
@@ -1563,6 +1613,7 @@ notif_card_1 = """
     }}
   """ #.format(test="ALOHA")
 
+# final notification which will be sent
 notif_card_2 = """
     {{
       "contentType": "application/vnd.microsoft.card.adaptive",
@@ -1593,52 +1644,31 @@ notif_card_2 = """
                                     "type": "TextBlock",
                                     "text": "{textbox_1}",
                                     "wrap": true
-                                }},
+                                }}
                             ]
                         }}
                     ],
                     "spacing": "None",
                     "bleed": true
                 }}
-            ],
-            "bleed": true
+            ]
         }},
         {{
-            "type": "ColumnSet",
-            "columns": [
+            "type": "Column",
+            "width": "auto",
+            "items": [
                 {{
-                    "type": "Column",
-                    "width": "stretch",
-                    "items": [
-                        {{
-                            "type": "Input.Toggle",
-                            "title": "Review before sending",
-                            "value": "true",
-                            "wrap": false,
-                            "id": "review",
-                            "spacing": "None"
-                        }}
-                    ]
-                }},
-                {{
-                    "type": "Column",
-                    "width": "auto",
-                    "items": [
-                        {{
-                        "type": "TextBlock",
-                        "text": "Under review: {msg_id}",
-                        "spacing": "Small",
-                        "horizontalAlignment": "Right",
-                        "fontType": "Monospace",
-                        "size": "Small",
-                        "weight": "Lighter",
-                        "color": "Light",
-                        "isVisible": {isVisible}
-                        }}
-                    ]
+                "type": "TextBlock",
+                "text": "Under review: {msg_id}",
+                "spacing": "Small",
+                "horizontalAlignment": "Right",
+                "fontType": "Monospace",
+                "size": "Small",
+                "weight": "Lighter",
+                "color": "Light",
+                "isVisible": {isVisible}
                 }}
-            ],
-            "separator": true
+            ]
         }}
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
@@ -1974,8 +2004,8 @@ help_card = """
     }
   """
 
-# default card template
-send_notif = """
+# default card template to be filled out
+send_notif_template_1 = """
     {
       "contentType": "application/vnd.microsoft.card.adaptive",
       "content": {
@@ -2030,7 +2060,7 @@ send_notif = """
                                     "type": "Input.Text",
                                     "placeholder": "Text box 1",
                                     "isMultiline": true,
-                                    "id": "textbox_1"
+                                    "id": "textbox_1_card_1"
                                 },
                                 {
                                     "type": "Input.Text",
@@ -2202,8 +2232,8 @@ send_notif = """
     }
   """
 
-# send simple message
-send_notif_2 = """
+# send simple message to be filled out
+send_notif_template_2 = """
     {
       "contentType": "application/vnd.microsoft.card.adaptive",
       "content": {
@@ -2229,7 +2259,7 @@ send_notif_2 = """
                                     "type": "Input.Text",
                                     "placeholder": "Text box 1",
                                     "isMultiline": true,
-                                    "id": "textbox_1"
+                                    "id": "textbox_1_card_2"
                                 }
                             ]
                         }
