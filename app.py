@@ -114,7 +114,7 @@ def handle_cards(api, incoming_msg):
             api.messages.delete(messageId=m["messageId"]) 
             return "Thank you, you successfully unsubscribed from GoCSAP bot updates."
 
-    elif "{'textbox_1':" in str(m["inputs"]):
+    elif "submit_notif_1" in str(m["inputs"]):
         
         log(severity=1, infoMsg="New notification submitted.", personId=personId)
         
@@ -150,7 +150,26 @@ def handle_cards(api, incoming_msg):
             if element == "" or element == " ":
                 return "Oops, it seems like you didn't fill out all required fields. Please verify your entries and re-submit the notification."
 
-        parse_msg(parse, roomId, review)
+        parse_msg(parse, roomId, review, template="1")
+
+        return ""
+
+    elif "submit_notif_2" in str(m["inputs"]):
+        
+        log(severity=1, infoMsg="New notification submitted.", personId=personId)
+        
+        parse = []
+        main_title = m["inputs"]["main_title"]
+        textbox_1 = m["inputs"]["textbox_1"]
+        review = m["inputs"]["review"]   
+
+        parse.extend([main_title, textbox_1])
+        
+        for element in parse:
+            if element == "" or element == " ":
+                return "Oops, it seems like you didn't fill out all required fields. Please verify your entries and re-submit the notification."
+
+        parse_msg(parse, roomId, review, template="2")
 
         return ""
 
@@ -339,24 +358,27 @@ def handle_cards(api, incoming_msg):
         api.messages.create(toPersonId=personId, 
                             text=text, files=['GoCSAP_botAnalytics_'+date.today().strftime("%d%m%Y")+'.xlsx'])    
         return ""
-        
-        
-        
+           
     api.messages.delete(messageId=m["messageId"])
     log(incoming_msg, severity=3, personId=personId, infoMsg="Faulty command. Please review: "+str(m["inputs"]))
     return "Sorry, I do not understand the command {} yet.".format(firstName, m["inputs"])    
 
-def parse_msg(parse, roomId, review):
+def parse_msg(parse, roomId, review, template):
     now = datetime.now()
     msg_id = now.strftime("%d%m%Y-%H%M")
     
     parse.extend([msg_id, roomId])
 
-    attachment = notif_card.format(image_url=parse[0], small_title=parse[1], main_title=parse[2], 
-                                   textbox_1=parse[3], textbox_2=parse[4], textbox_3=parse[5], 
-                                   button1_text=parse[6], button2_text=parse[7], button3_text=parse[8], 
-                                   button1_url=parse[9], button2_url=parse[10], button3_url=parse[11],
-                                   msg_id=parse[12], isVisible="true")   
+    if template == "1":
+
+        attachment = notif_card.format(image_url=parse[0], small_title=parse[1], main_title=parse[2], 
+                                    textbox_1=parse[3], textbox_2=parse[4], textbox_3=parse[5], 
+                                    button1_text=parse[6], button2_text=parse[7], button3_text=parse[8], 
+                                    button1_url=parse[9], button2_url=parse[10], button3_url=parse[11],
+                                    msg_id=parse[12], isVisible="true")   
+    elif template == "2":
+        attachment = notif_card.format(main_title=parse[0], textbox_1=parse[1], 
+                                       msg_id=parse[2], isVisible="true")          
 
     backupmessage = "Hi there! 👋 The GoCSAP bot just sent you a card."
     
@@ -1428,7 +1450,7 @@ request_admin_card = """
     }}
   """
 
-notif_card = """
+notif_card_1 = """
     {{
       "contentType": "application/vnd.microsoft.card.adaptive",
       "content": {{
@@ -1534,13 +1556,96 @@ notif_card = """
             "isVisible": {isVisible}
     }}
     
-    
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
     "version": "1.2"
 }}
     }}
   """ #.format(test="ALOHA")
+
+notif_card_2 = """
+    {{
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {{
+    "type": "AdaptiveCard",
+    "body": [
+        {{
+            "type": "Container",
+            "items": [
+                {{
+                    "type": "ColumnSet",
+                    "columns": [
+                        {{
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {{
+                                    "type": "TextBlock",
+                                    "weight": "Bolder",
+                                    "text": "{main_title}",
+                                    "horizontalAlignment": "Left",
+                                    "wrap": true,
+                                    "color": "Light",
+                                    "size": "Large",
+                                    "spacing": "Small"
+                                }},
+                                {{
+                                    "type": "TextBlock",
+                                    "text": "{textbox_1}",
+                                    "wrap": true
+                                }},
+                            ]
+                        }}
+                    ],
+                    "spacing": "None",
+                    "bleed": true
+                }}
+            ],
+            "bleed": true
+        }},
+        {{
+            "type": "ColumnSet",
+            "columns": [
+                {{
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {{
+                            "type": "Input.Toggle",
+                            "title": "Review before sending",
+                            "value": "true",
+                            "wrap": false,
+                            "id": "review",
+                            "spacing": "None"
+                        }}
+                    ]
+                }},
+                {{
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {{
+                        "type": "TextBlock",
+                        "text": "Under review: {msg_id}",
+                        "spacing": "Small",
+                        "horizontalAlignment": "Right",
+                        "fontType": "Monospace",
+                        "size": "Small",
+                        "weight": "Lighter",
+                        "color": "Light",
+                        "isVisible": {isVisible}
+                        }}
+                    ]
+                }}
+            ],
+            "separator": true
+        }}
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.2"
+}}
+    }}
+  """
 
 greeting_card = """
     {
@@ -2073,7 +2178,7 @@ send_notif = """
                                 {
                                     "type": "Action.Submit",
                                     "title": "Submit Notification",
-                                    "id": "submit"
+                                    "id": "submit_notif_1"
                                     
                                 }
                             ],
@@ -2162,7 +2267,7 @@ send_notif_2 = """
                                 {
                                     "type": "Action.Submit",
                                     "title": "Submit Notification",
-                                    "id": "submit"
+                                    "id": "submit_notif_2"
                                 }
                             ],
                             "horizontalAlignment": "Center",
