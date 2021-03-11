@@ -199,6 +199,8 @@ def handle_cards(api, incoming_msg):
         
         return "Notification declined an not sent 😞"
     
+    elif m["inputs"] == "submit_notif_1":
+        return "YES"
     
     elif "approve_admin" in m["inputs"]:
         requestor = m["inputs"].split(" ")[1]
@@ -476,9 +478,21 @@ def fetch_infos(incoming_msg):
 
 def send_notif(incoming_msg):
     if check_permission(email=incoming_msg.personEmail) == "Authorized":
+        request = (incoming_msg.text).split(" ")
+        if len(request) > 2:
+            if request == "1":
+                template = send_notif
+            elif request == "2":
+                template = send_notif_2
+            else:
+                text = "Oops, I do not support template {} yet. I currently support {} templates. Please adjust your choice to one of these.".format(request, "2")
+                return text
+        else:
+            template = send_notif
+
         person = bot.teams.people.get(incoming_msg.personId)
         personId = person.id
-        attachment = send_card
+        attachment = template
         backupmessage = "Hi there! 👋 You requested to create a notification through the GoCSAP bot."
 
         c = create_message_with_attachment(incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment))  
@@ -1855,7 +1869,8 @@ help_card = """
     }
   """
 
-send_card = """
+# default card template
+send_notif = """
     {
       "contentType": "application/vnd.microsoft.card.adaptive",
       "content": {
@@ -2058,7 +2073,8 @@ send_card = """
                                 {
                                     "type": "Action.Submit",
                                     "title": "Submit Notification",
-                                    "id": "submit"
+                                    "id": "submit",
+                                    "data": "submit_notif_1"
                                 }
                             ],
                             "horizontalAlignment": "Center",
@@ -2070,7 +2086,96 @@ send_card = """
         },
         {
             "type": "TextBlock",
-            "text": "If **Review before sending** is checked, the notification will first be sent to you for review before it is sent to all subscribers.",
+            "text": "If **review before sending** is checked, the notification will first be sent to you for review before it is sent to all subscribers.",
+            "wrap": true,
+            "color": "Light"
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.2"
+}
+    }
+  """
+
+# send simple message
+send_notif_2 = """
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "Input.Text",
+                                    "placeholder": "Main title",
+                                    "id": "main_title",
+                                    "spacing": "None"
+                                },
+                                {
+                                    "type": "Input.Text",
+                                    "placeholder": "Text box 1",
+                                    "isMultiline": true,
+                                    "id": "textbox_1"
+                                }
+                            ]
+                        }
+                    ],
+                    "spacing": "None",
+                    "bleed": true
+                }
+            ],
+            "bleed": true
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "Input.Toggle",
+                            "title": "Review before sending",
+                            "value": "true",
+                            "wrap": false,
+                            "id": "review",
+                            "spacing": "None"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.Submit",
+                                    "title": "Submit Notification",
+                                    "id": "submit"
+                                }
+                            ],
+                            "horizontalAlignment": "Center",
+                            "spacing": "None"
+                        }
+                    ]
+                }
+            ],
+            "separator": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "If **review before sending** is checked, the notification will first be sent to you for review before it is sent to all subscribers.",
             "wrap": true,
             "color": "Light"
         }
