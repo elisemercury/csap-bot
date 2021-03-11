@@ -73,10 +73,9 @@ def greeting(incoming_msg):
     return ""
 
 def handle_cards(api, incoming_msg):
-    room = bot.teams.rooms.get(incoming_msg["data"]["roomId"])
-    roomId = room.id    
     m = get_attachment_actions(incoming_msg["data"]["id"])
     personId = m["personId"]
+    roomId = m["roomId"]
     db_entry = (str(roomId))
 
     if m["inputs"] == "subscribe":
@@ -84,9 +83,9 @@ def handle_cards(api, incoming_msg):
             cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
             con.commit()
             # update log
-            log(incoming_msg, severity=0, personId="", infoMsg="Subscriber database updated.")
+            log(severity=0, infoMsg="Subscriber database updated.", personId=personId)
             # send success message
-            text="Thank you, you sucessfully subscribed to GoCSAP bot updates. 🥳"
+            text="Thank you, you successfully subscribed to GoCSAP bot updates. 🥳"
             api.messages.create(roomId=roomId, text=text)    
             # delete card
             api.messages.delete(messageId=m["messageId"])  
@@ -100,9 +99,9 @@ def handle_cards(api, incoming_msg):
         try:
             cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
             con.commit()
-            log(incoming_msg, severity=0, personId="", infoMsg="Subscriber database updated.")
+            log(severity=0, infoMsg="Subscriber database updated.", personId=personId)
             # send success message
-            text="Thank you, you sucessfully unsubscribed from GoCSAP bot updates."
+            text="Thank you, you successfully unsubscribed from GoCSAP bot updates."
             api.messages.create(roomId=roomId, text=text)    
             # delete card
             api.messages.delete(messageId=m["messageId"])    
@@ -113,9 +112,9 @@ def handle_cards(api, incoming_msg):
             return "Thank you, you successfully unsubscribed from GoCSAP bot updates."
 
     elif "{'textbox_1':" in str(m["inputs"]):
-        print(1)
-        log(incoming_msg, severity=1, personId=personId, infoMsg="Notification submitted.")
-        print(2)
+        
+        log(severity=1, infoMsg="New notification submitted.", personId=personId)
+        
         parse = []
         image_url = m["inputs"]["image_url"]
         small_title = m["inputs"]["small_title"]
@@ -130,7 +129,7 @@ def handle_cards(api, incoming_msg):
         button2_url = m["inputs"]["button2_url"]
         button3_url = m["inputs"]["button3_url"]   
         review = m["inputs"]["review"]   
-        print(3)
+
         # correct URL is invalid
         if "https" not in image_url:
             image_url = "https://" + image_url
@@ -140,14 +139,14 @@ def handle_cards(api, incoming_msg):
             button2_url = "https://" + button2_url
         if "https" not in button3_url:
             button3_url = "https://" + button3_url
-        print(4)
+
         parse.extend([image_url, small_title, main_title, textbox_1, textbox_2, textbox_3, button1_text, button2_text,
                     button3_text, button1_url, button2_url, button3_url])
         
         for element in parse:
             if element == "" or element == " ":
                 return "Oops, it seems like you didn't fill out all required fields. Please verify your entries and re-submit the notification."
-        print(5)
+
         parse_msg(parse, roomId, review)
 
         return ""
@@ -173,22 +172,28 @@ def handle_cards(api, incoming_msg):
             api.messages.delete(messageId=m["messageId"])            
             os.remove("parse.pkl") 
             
-            c = create_message_with_attachment(
-                roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
-            ) # change to bot subscribers
-            
-            log(incoming_msg, severity=2, personId=personId, infoMsg="Notification approved and sent.")
+            cur.execute("""SELECT roomId FROM subscribers;""")
+            result = cur.fetchall()
+            for element in result:
+                for roomId in element:
+                    c = create_message_with_attachment(
+                        roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
+                    ) 
+
+            log(severity=1, infoMsg="Notification approved and sent.", personId=personId)
             return ""      
         
         else:
             api.messages.delete(messageId=m["messageId"])    
-            log(incoming_msg, severity=2, personId=personId, infoMsg="Notification approval without permission. Not sent.")
+            log(severity=2, infoMsg="Notification approved without permission. Not sent.", personId=personId)
             return "Oops, you do not have permission to approve the notification!"
 
     elif m["inputs"] == "decline_msg":
         os.remove("parse.pkl") 
         api.messages.delete(messageId=m["messageId"]) 
-        log(incoming_msg, severity=2, personId=personId, infoMsg="Notification declined and not sent.")        
+        
+        log(severity=2, infoMsg="Notification declined and not sent.", personId=personId)   
+        
         return "Notification declined an not sent 😞"
     
     
@@ -203,6 +208,8 @@ def handle_cards(api, incoming_msg):
             else:
                 cur.execute("""INSERT INTO admins (email, personid, since, role) VALUES (%s, %s, %s, %s)""", (requestor, "", date.today().strftime("%d%m%Y"), "admin"))
                 con.commit()
+                
+                log(severity=2, infoMsg="New admin added: {}.".format(requestor), personId=personId)  
                 
                 text="Hurray, you are now registered as an **admin** for the GoCSAP bot! 🎉 \nYou can now type **send notif** to submit notifications and type **analytics** to view GoCSAP bot analytics"
                 api.messages.create(toPersonEmail=requestor, 
@@ -221,6 +228,8 @@ def handle_cards(api, incoming_msg):
                 cur.execute("""INSERT INTO admins (email, personid, since, role) VALUES (%s, %s, %s, %s)""", (requestor, "", date.today().strftime("%d%m%Y"), "superadmin"))
                 con.commit()
                 
+                log(severity=2, infoMsg="New superadmin added: {}.".format(requestor), personId=personId)  
+                
                 text="Hurray, you are now registered as a **superadmin** for the GoCSAP bot! 🎉 \nYou can now type **send notif** to submit notifications, type **analytics** to view GoCSAP bot analytics and receive requests for approving new admins."
                 api.messages.create(toPersonEmail=requestor, 
                                      markdown=text)    
@@ -233,6 +242,9 @@ def handle_cards(api, incoming_msg):
         requestor = m["inputs"].split(" ")[1]
         level = m["inputs"].split(" ")[2]
         api.messages.delete(messageId=m["messageId"]) 
+        
+        log(severity=2, infoMsg="Admin access declined: {}.".format(requestor), personId=personId)  
+        
         text = "The {} request for {} has been successfully declined.".format(level, requestor)
         return text
     
@@ -315,6 +327,8 @@ def handle_cards(api, incoming_msg):
         
         api.messages.delete(messageId=m["messageId"]) 
         
+        log(severity=1, infoMsg="Analytics report pulled.", personId=personId)  
+        
         text = "Please find your detailed GoCSAP bot analytics report attached. 📊"
         personId = m["personId"]
         api.messages.create(toPersonId=personId, 
@@ -328,38 +342,43 @@ def handle_cards(api, incoming_msg):
     return "Sorry, I do not understand the command {} yet.".format(firstName, m["inputs"])    
 
 def parse_msg(parse, roomId, review):
-    print(5)
     now = datetime.now()
     msg_id = now.strftime("%d%m%Y-%H%M")
     
     parse.extend([msg_id, roomId])
-    print(6)
+
     attachment = notif_card.format(image_url=parse[0], small_title=parse[1], main_title=parse[2], 
                                    textbox_1=parse[3], textbox_2=parse[4], textbox_3=parse[5], 
                                    button1_text=parse[6], button2_text=parse[7], button3_text=parse[8], 
                                    button1_url=parse[9], button2_url=parse[10], button3_url=parse[11],
                                    msg_id=parse[12], isVisible="true")   
-    print(7)
+
     backupmessage = "Hi there! 👋 The GoCSAP bot just sent you a card."
     
     if str(review) == "true":
-        print(8)
+
         with open('parse.pkl', 'wb') as f:
             pickle.dump(parse, f)
         c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
-                                           attachment=json.loads(attachment))    
-
-        print(9)                                    
+                                           attachment=json.loads(attachment))                                       
          
         c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
                                            attachment=json.loads(approve_card.format(msg_id=parse[12])))  
-        print(10)
-        log(incoming_msg="", severity=1, personId=personId, infoMsg="Notification submitted and sent for review.")
+
+        log(severity=1, infoMsg="Notification submitted and sent for review.", personId=personId)
         
     else:
-        c = create_message_with_attachment(roomId, msgtxt=backupmessage, attachment=json.loads(attachment))
-        log(incoming_msg="", severity=2, personId=personId, infoMsg="Notification submitted without review.")
-        # change to bot subscribers
+        cur.execute("""SELECT roomId FROM subscribers;""")
+        result = cur.fetchall()
+        for element in result:
+            for roomId in element:
+                c = create_message_with_attachment(
+                    roomId, msgtxt=backupmessage, attachment=json.loads(attachment)) 
+
+        log(severity=2, infoMsg="Notification sent without review.", personId=personId)
+        
+        text = "Notification {} was approved and sent to bot subscribers! 🎉".format(msg_id)
+        return text
 
 def create_message_with_attachment(rid, msgtxt, attachment, toPersonEmail=""):
     headers = {
@@ -388,26 +407,27 @@ def get_attachment_actions(attachmentid):
 def subscribe(incoming_msg):
     fetch_infos(incoming_msg)
     db_entry = roomId
-    try:
-        cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
-        con.commit()
-        log(incoming_msg, severity=0, personId="", infoMsg="Subscriber database updated.", personEmail=incoming_msg.personEmail)
-    except:
-        print("Could not be added to DB")
-        
-    return "Thank you, you sucessfully subscribed to CSAP bot updates. 🥳"
+    
+    request = incoming_msg.text
+    # if the command doesnt start with un, subscribe the user
+    if request[0:2] != "un":
+        try:
+            cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
+            con.commit()
+            log(severity=0, infoMsg="Subscriber database updated.", personEmail=incoming_msg.personEmail)
+        except:
+            print("Could not be added to DB")
 
-def unsubscribe(incoming_msg):
-    fetch_infos(incoming_msg)
-    db_entry = roomId
-
-    try:
-        cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
-        con.commit()
-        log(incoming_msg, severity=0, personId="", infoMsg="Subscriber database updated.", personEmail=incoming_msg.personEmail)
-    except:
-        print("Could not be removed from DB")
-    return "Thank you, you sucessfully unsubscribed from CSAP bot updates."  
+        return "Thank you, you successfully subscribed to CSAP bot updates. 🥳"
+    # if it starts with un, then unsubscribe the user
+    else:
+        try:
+            cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
+            con.commit()
+            log(severity=0, infoMsg="Subscriber database updated.", personEmail=incoming_msg.personEmail)
+        except:
+            print("Could not be removed from DB")
+        return "Thank you, you successfully unsubscribed from CSAP bot updates. 😢"  
 
 def help(incoming_msg):
     if check_permission(email=incoming_msg.personEmail, level="superadmin") == "Authorized":
@@ -438,7 +458,7 @@ def help(incoming_msg):
 
 def contact(incoming_msg):
     fetch_infos(incoming_msg)
-    return "Thank you {} for using the CSAP bot! \n Current version is v1.0. \n Please contact elandman@cisco.com for more information or for feedback and improvement suggestions.".format(firstName)
+    return "Thank you {} for using the GoCSAP bot! \n Current version is v1.0. \n Please contact elandman@cisco.com for more information or for feedback and improvement suggestions.".format(firstName)
 
 def fetch_infos(incoming_msg):
     global sender, firstName, room, roomId, personId, email
@@ -459,15 +479,15 @@ def send_notif(incoming_msg):
         backupmessage = "Hi there! 👋 You requested to create a notification through the GoCSAP bot."
 
         c = create_message_with_attachment(incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment))  
-        log(incoming_msg, severity=1, personId=personId, infoMsg="Notification request made.", personEmail=incoming_msg.personEmail)
+        log(severity=1, infoMsg="Notification request made.", personEmail=incoming_msg.personEmail)
         
         return ""   
     else:
-        log(incoming_msg, severity=2, personId=incoming_msg.personId, infoMsg="Analytics requested without permission.", personEmail=incoming_msg.personEmail)
+        log(severity=2, infoMsg="Notification requested without permission.", personEmail=incoming_msg.personEmail)
         text = "You do not have permission to send notifications via the GoCSAP bot. You can request admin access by typing **make admin**."
         return text
 
-def log(incoming_msg, severity, personId, infoMsg="", personEmail = ""):
+def log(severity, personId="", infoMsg="", personEmail = ""):
     # function for logging al things sent with the bot
     # severity 0, 1, 2, 3 (0=informational, ..., 3=emergency)
     with open(logs) as json_file:
@@ -475,53 +495,56 @@ def log(incoming_msg, severity, personId, infoMsg="", personEmail = ""):
     now = datetime.now()
     logDate = now.strftime("%d%m%Y-%H:%M")   
     
-    data[logDate] = {"date": now.strftime("%d-%m-%Y"),
-                     "severity": severity,
+    data[logDate] = {"severity": severity,
                      "infoMsg": infoMsg,
                      "personEmail": personEmail,
                      "personId": personId}
     
-    with open(logs, 'w') as outfile:
+    with open(logs, 'a') as outfile:
         json.dump(data, outfile)    
 
 def check_permission(personId="", email="", level="admin"):
-    if personId != "":
-        if level == "superadmin":
-            cur.execute("""SELECT personid FROM admins WHERE role='superadmin';""")
-            superAdminList = cur.fetchall()            
-            for elements in superAdminList:
-                for superAdmin in elements:
-                    if personId == superAdmin:
-                        return "Authorized"
-            return "Unauthorized"
+    try:
+        if personId != "":
+            if level == "superadmin":
+                cur.execute("""SELECT personid FROM admins WHERE role='superadmin';""")
+                superAdminList = cur.fetchall()            
+                for elements in superAdminList:
+                    for superAdmin in elements:
+                        if personId == superAdmin:
+                            return "Authorized"
+                return "Unauthorized"
+            else:
+                cur.execute("""SELECT personid FROM admins;""")
+                adminList = cur.fetchall()
+                for elements in adminList:
+                    for admin in elements:
+                        if personId == admin:
+                            return "Authorized"
+                return "Unauthorized"  
+
+        elif email != "":
+            if level == "superadmin":
+                cur.execute("""SELECT email FROM admins WHERE role='superadmin';""")
+                superAdminList = cur.fetchall()            
+                for elements in superAdminList:
+                    for superAdmin in elements:
+                        if email == superAdmin:
+                            return "Authorized"
+                return "Unauthorized"
+            else:
+                cur.execute("""SELECT email FROM admins;""")
+                adminList = cur.fetchall()
+                for elements in adminList:
+                    for admin in elements:
+                        if email == admin:
+                            return "Authorized"
+                return "Unauthorized"            
         else:
-            cur.execute("""SELECT personid FROM admins;""")
-            adminList = cur.fetchall()
-            for elements in adminList:
-                for admin in elements:
-                    if personId == admin:
-                        return "Authorized"
-            return "Unauthorized"  
-        
-    elif email != "":
-        if level == "superadmin":
-            cur.execute("""SELECT email FROM admins WHERE role='superadmin';""")
-            superAdminList = cur.fetchall()            
-            for elements in superAdminList:
-                for superAdmin in elements:
-                    if email == superAdmin:
-                        return "Authorized"
-            return "Unauthorized"
-        else:
-            cur.execute("""SELECT email FROM admins;""")
-            adminList = cur.fetchall()
-            for elements in adminList:
-                for admin in elements:
-                    if email == admin:
-                        return "Authorized"
-            return "Unauthorized"            
-    else:
-        return "Unauthorized"    
+            return "Unauthorized"    
+    except:
+        text = "Oops, your access level could not be verified. Please contact a GoCSAP superadmin or elandman@cisco.com."
+        return text
     
 def valid_email(email):  
     if(re.search('^[a-z0-9]+[\._]?[a-z0-9]+[@]cisco[.]\w{2,3}$', email)):  
@@ -558,7 +581,7 @@ def request_admin_access(incoming_msg):
                                                            msgtxt=backupmessage, 
                                                            attachment=json.loads(attachment), 
                                                            toPersonEmail=email)  
-                    log(incoming_msg, severity=2, personId=incoming_msg.personId, infoMsg="New admin request submitted.", personEmail=incoming_msg.personEmail)                    
+                    log(severity=2, infoMsg="New admin request submitted.", personEmail=incoming_msg.personEmail)                    
 
                     # send confimation to requestor if requestor is not superadmin
                     for element in superAdminList:
@@ -587,7 +610,7 @@ def request_admin_access(incoming_msg):
                                                                msgtxt=backupmessage, 
                                                                attachment=json.loads(attachment), 
                                                                toPersonEmail=email)  
-                    log(incoming_msg, severity=2, personId=incoming_msg.personId, infoMsg="New superadmin request submitted.", personEmail=incoming_msg.personEmail)                    
+                    log(severity=2, infoMsg="New superadmin request submitted.", personEmail=incoming_msg.personEmail)                    
 
                     # send confim ation to requestor
                     for element in superAdminList:
@@ -603,9 +626,10 @@ def request_admin_access(incoming_msg):
         else:
             text = "{} is not a valid email address. Admin rights are reserved for Cisco employees with a valid email address only. Please try again.".format(reqEmail)
             return text
+    # request for self
     else:
         reqEmail = incoming_msg.personEmail
-        print(incoming_msg)
+
         if valid_email(reqEmail) == "valid":
             if request[1] == "admin":
                 if check_permission(email=reqEmail) == "Authorized":
@@ -626,7 +650,7 @@ def request_admin_access(incoming_msg):
                                                                msgtxt=backupmessage, 
                                                                attachment=json.loads(attachment), 
                                                                toPersonEmail=email)  
-                    log(incoming_msg, severity=2, personId=incoming_msg.personId, infoMsg="New admin request submitted.", personEmail=incoming_msg.personEmail)                    
+                    log(severity=2, infoMsg="New admin request submitted.", personEmail=reqEmail)                    
 
                     # send confim ation to requestor
                     text="Thank you, your request for admin access has been forwarded! Once your request has been approved/declined you will receive a notification."
@@ -651,7 +675,7 @@ def request_admin_access(incoming_msg):
                                                                msgtxt=backupmessage, 
                                                                attachment=json.loads(attachment), 
                                                                toPersonEmail=email)  
-                    log(incoming_msg, severity=2, personId=incoming_msg.personId, infoMsg="New superadmin request submitted.", personEmail=incoming_msg.personEmail)                    
+                    log(severity=2, infoMsg="New superadmin request submitted.", personEmail=reqEmail)                     
 
                     # send confim ation to requestor
                     text="Thank you, your request for superadmin access has been forwarded! Once your request has been approved/declined you will receive a notification."
@@ -661,6 +685,7 @@ def request_admin_access(incoming_msg):
                 return "Oops, something went wrong 😢"
 
         else:
+            log(severity=2, infoMsg="New invalid admin request by non Cisco employee.", personEmail=reqEmail) 
             text = "Admin rights are reserved for Cisco employees with a valid Cisco email address only."
             return text
 
@@ -696,7 +721,7 @@ def cancel_admin_access(incoming_msg):
                 api.messages.create(toPersonEmail=reqEmail, 
                                     text=text)    
                 
-                log(incoming_msg, severity=2, personId="", infoMsg="Admin access revoked for {}.".format(reqEmail), personEmail=incoming_msg.personEmail)
+                log(severity=2, infoMsg="Admin access revoked for {}.".format(reqEmail), personEmail=incoming_msg.personEmail)
 
                 text = "Admin access for {} has successfully been revoked.".format(reqEmail)
                 return text
@@ -705,7 +730,7 @@ def cancel_admin_access(incoming_msg):
                 return text
         else:
             # not a superadmin
-            log(incoming_msg, severity=2, personId="", infoMsg="No permission to revoke admin access.", personEmail=incoming_msg.personEmail)
+            log(severity=2, infoMsg="No permission to revoke admin access.", personEmail=incoming_msg.personEmail)
             text = "You do not have permission to revoke someone else's admin access. Only superadmins can grant and revoke admin access."
             return text
         
@@ -715,7 +740,7 @@ def cancel_admin_access(incoming_msg):
         if check_permission(email=reqEmail) == "Authorized":
             cur.execute("""DELETE FROM admins WHERE email = (%s)""", (reqEmail,))
             con.commit()
-            log(incoming_msg, severity=2, personId="", infoMsg="Admin rights revoked for {}.".format(reqEmail), personEmail=incoming_msg.personEmail)
+            log(severity=2, infoMsg="Admin rights revoked for {}.".format(reqEmail), personEmail=reqEmail)
 
             text = "Your admin access has successfully been revoked.".format(reqEmail)
             return text
@@ -743,15 +768,14 @@ def admin_analytics(incoming_msg):
                                            nr_admins=nr_admins, nr_superadmins=nr_superadmins)
         backupmessage = "Hi admin! 👋 Here are the GoCSAP bot analytics you requested."
 
-        log(incoming_msg, severity=1, personId=incoming_msg.personId, infoMsg="Analytics requested with success.", personEmail=incoming_msg.personEmail)
+        log(severity=1, infoMsg="Analytics requested.", personEmail=reqEmail)
 
         c = create_message_with_attachment(
-            incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
-        )    
+            incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment))    
 
         return ""       
     else:
-        log(incoming_msg, severity=2, personId=incoming_msg.personId, infoMsg="Analytics requested without permission.", personEmail=incoming_msg.personEmail)
+        log(severity=2, infoMsg="Analytics requested without permission.", personEmail=reqEmail)
         text = "You do not have permission to view GoCSAP bot analytics. You can request admin access by typing **make admin**.".format(reqEmail)
         return text    
     
@@ -781,22 +805,22 @@ def joke(incoming_msg):
 def logfile(incoming_msg):
     reqEmail = incoming_msg.personEmail
     if check_permission(email=reqEmail, level="superadmin") == "Authorized":  
-        log(incoming_msg, severity=2, personId=incoming_msg.personId, infoMsg="Logfile requested by superadmin.", personEmail=incoming_msg.personEmail)
+        log(severity=1, infoMsg="Logfile requested.", personEmail=reqEmail)
         text = "Please find the GoCSAP bot logfile attached."
         api.messages.create(toPersonEmail=reqEmail, 
                             text=text, files=['logs.txt'])    
         return ""
     else:
         text = "You do not have permission to view the GoCSAP bot logfile. Please request superadmin acces by typing **make superadmin**."
-        log(incoming_msg, severity=3, personId=incoming_msg.personId, infoMsg="Logfile requested without permission.", personEmail=incoming_msg.personEmail)
+        log(severity=2, infoMsg="Logfile requested without permission.", personEmail=reqEmail)
         return text
-
+    
 bot.set_greeting(greeting)
 bot.add_command("attachmentActions", "*", handle_cards)
 bot.add_command("help", "Help", help)
 bot.add_command("contact", "Contact", contact)
-bot.add_command("subscribe", "subscribe", subscribe)
 bot.add_command("unsubscribe", "unsubscribe", unsubscribe)
+bot.add_command("subscribe", "subscribe", subscribe)
 bot.add_command("send notif", "Send notif", send_notif)
 bot.add_command("make admin", "make admin", request_admin_access)
 bot.add_command("make superadmin", "make superadmin", request_admin_access)
@@ -811,11 +835,8 @@ if __name__ == "__main__":
     webhook_list = []
     for webhook in api.webhooks.list():
         webhook_list.append(webhook.id)
-    #print(webhook_list)
-
 
     for webhook in api.webhooks.list():
-        #print(webhook.id)
         if webhook.id != webhook_list[-2] and webhook.id != webhook_list[-1]:
             api.webhooks.delete(webhook.id)
 
@@ -1486,7 +1507,7 @@ notif_card = """
     {{
             "type": "TextBlock",
             "text": "Under review: {msg_id}",
-            "spacing": "None",
+            "spacing": "Small",
             "horizontalAlignment": "Right",
             "fontType": "Monospace",
             "size": "Small",
