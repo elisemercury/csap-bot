@@ -112,7 +112,6 @@ def handle_cards(api, incoming_msg):
             # send success message
             return "Thank you, you successfully unsubscribed from GoCSAP bot updates."
 
-    #elif "submit_notif_1" in str(m["inputs"]):
     elif "{'textbox_1_card_1':" in str(m["inputs"]):    
         log(severity=1, infoMsg="New notification submitted.", personId=personId)
         
@@ -233,9 +232,6 @@ def handle_cards(api, incoming_msg):
         
         return "Notification declined an not sent 😞"
     
-    elif m["inputs"] == "submit_notif_1":
-        return "YES"
-    
     elif "approve_admin" in m["inputs"]:
         requestor = m["inputs"].split(" ")[1]
         level = m["inputs"].split(" ")[2]
@@ -244,11 +240,30 @@ def handle_cards(api, incoming_msg):
                 text = "{} is already an admin.".format(requestor)
                 api.messages.delete(messageId=m["messageId"])    
                 return text
+            # check if requestor is already a superadmin, if yes, update records to admin
+            elif check_permission(email=requestor, level="superadmin") == "Authorized":
+                try:
+                    cur.execute("""UPDATE admins SET role =  (%s) WHERE email = (%s)""", ("admin", requestor)
+                    log(severity=2, infoMsg="Superadmin downgraded to admin: {}.".format(requestor), personId=personId)
+                    text="Your access level for the GoCSAP bot has been changed to **admin**! \nYou can now type **send notif** to submit notifications and type **analytics** to view GoCSAP bot analytics."
+                    api.messages.create(toPersonEmail=requestor, 
+                                        markdown=text)    
+                
+                    api.messages.delete(messageId=m["messageId"])  
+                    text = "Thank you, {} is now a superadmin for the GoCSAP bot.".format(requestor)
+                except:
+                    cur.rollback()
+                    log(severity=3, infoMsg="Failed to update database of admins: {}.".format(requestor), personId=personId)  
+                    text = ""     
+                finally:
+                    con.commit()
+                    return text                              
+            # new admin
             else:
                 try:
                     cur.execute("""INSERT INTO admins (email, personid, since, role) VALUES (%s, %s, %s, %s)""", (requestor, "", date.today().strftime("%d%m%Y"), "admin"))
                     log(severity=2, infoMsg="New admin added: {}.".format(requestor), personId=personId)
-                    text="Hurray, you are now registered as an **admin** for the GoCSAP bot! 🎉 \nYou can now type **send notif** to submit notifications and type **analytics** to view GoCSAP bot analytics"
+                    text="Hurray, you are now registered as an **admin** for the GoCSAP bot! 🎉 \nYou can now type **send notif** to submit notifications and type **analytics** to view GoCSAP bot analytics."
                     api.messages.create(toPersonEmail=requestor, 
                                         markdown=text)    
                 
@@ -267,6 +282,25 @@ def handle_cards(api, incoming_msg):
                 text = "{} is already a superadmin.".format(requestor)
                 api.messages.delete(messageId=m["messageId"])    
                 return text
+            # check if requestor is already an admin, if yes, update records to superadmin
+            elif check_permission(email=requestor, level="admin") == "Authorized":
+                try:
+                    cur.execute("""UPDATE admins SET role =  (%s) WHERE email = (%s)""", ("superadmin", requestor)
+                    log(severity=2, infoMsg="Admin ugraded to superadmin: {}.".format(requestor), personId=personId)
+                    text="Your access level for the GoCSAP bot has been changed to **superadmin**! 🎉 \nYou can now type **send notif** to submit notifications, type **analytics** to view GoCSAP bot analytics and receive requests for approving new admins."
+                    api.messages.create(toPersonEmail=requestor, 
+                                        markdown=text)    
+                
+                    api.messages.delete(messageId=m["messageId"])  
+                    text = "Thank you, {} is now a superadmin for the GoCSAP bot.".format(requestor)
+                except:
+                    cur.rollback()
+                    log(severity=3, infoMsg="Failed to update database of admins: {}.".format(requestor), personId=personId)  
+                    text = ""     
+                finally:
+                    con.commit()
+                    return text   
+            # new superadmin           
             else:
                 try:
                     cur.execute("""INSERT INTO admins (email, personid, since, role) VALUES (%s, %s, %s, %s)""", (requestor, "", date.today().strftime("%d%m%Y"), "superadmin"))
@@ -383,7 +417,6 @@ def handle_cards(api, incoming_msg):
         return ""
            
     api.messages.delete(messageId=m["messageId"])
-    print(m)
     log(severity=3, personId=personId, infoMsg="Faulty command. Please review: "+str(m["inputs"]))
     return "Sorry, I do not understand the command {} yet.".format(m["inputs"])    
 
@@ -703,7 +736,7 @@ def request_admin_access(incoming_msg):
                     superAdminList = cur.fetchall() 
                     
                     attachment = request_admin_card.format(requestor=reqEmail, level="superadmin")
-                    backupmessage = "Hi admin! 👋 Someone requested admin access and your approval is required."
+                    backupmessage = "Hi admin! 👋 Someone requested superadmin access and your approval is required."
                     
                     # send request to all superadmins
                     for element in superAdminList:
@@ -714,7 +747,7 @@ def request_admin_access(incoming_msg):
                                                                toPersonEmail=email)  
                     log(severity=2, infoMsg="New superadmin request submitted.", personEmail=incoming_msg.personEmail)                    
 
-                    # send confim ation to requestor
+                    # send confimation to requestor
                     for element in superAdminList:
                         for email in element:
                             if incoming_msg.personEmail == email:
