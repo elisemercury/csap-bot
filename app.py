@@ -595,18 +595,13 @@ def send_notif(incoming_msg):
 def log(severity, personId="", infoMsg="", personEmail = ""):
     # function for logging al things sent with the bot
     # severity 0, 1, 2, 3 (0=informational, ..., 3=emergency)
-    with open(logs) as json_file:
-        data = json.load(json_file)
     now = datetime.now()
     logDate = now.strftime("%d%m%Y-%H:%M")   
     
-    data[logDate] = {"severity": severity,
-                     "infoMsg": infoMsg,
-                     "personEmail": personEmail,
-                     "personId": personId}
-    
-    with open(logs, 'w') as outfile:
-        json.dump(data, outfile)    
+    data = "\n{}, Severity: {}, Info: {}, personEmail: {}, personId: {}".format(logDate, severity, infoMsg, personEmail, personId)
+
+    with open(logs, "a") as file:
+        file.write(data) 
 
 def check_permission(personId="", email="", level="admin"):
     #try:
