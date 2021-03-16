@@ -403,7 +403,7 @@ def parse_msg(incoming_msg, parse, roomId, review, template):
             c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
                                                attachment=json.loads(approve_card.format(msg_id=msg_id)))  
 
-            log(severity=1, infoMsg="Notification submitted and sent for review.", personId=personId)
+            log(severity=1, infoMsg="Notification submitted and sent for review.", personId=incoming_msg.personId)
                
         elif template == "2":
             attachment = notif_card_2.format(main_title=parse[0], textbox_1=parse[1], 
@@ -418,7 +418,7 @@ def parse_msg(incoming_msg, parse, roomId, review, template):
             c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
                                                attachment=json.loads(approve_card.format(msg_id=msg_id)))  
 
-            log(severity=1, infoMsg="Notification submitted and sent for review.", personId=personId)
+            log(severity=1, infoMsg="Notification submitted and sent for review.", personId=incoming_msg.personId)
         
         ### add new templates here
         
@@ -443,7 +443,7 @@ def parse_msg(incoming_msg, parse, roomId, review, template):
                 c = create_message_with_attachment(
                     subscriberRoomId, msgtxt=backupmessage, attachment=json.loads(attachment)) 
 
-        log(severity=2, infoMsg="Notification sent without review.", personId=personId)
+        log(severity=2, infoMsg="Notification sent without review.", personId=incoming_msg.personId)
         
         m = get_attachment_actions(incoming_msg["data"]["id"])
         api.messages.delete(messageId=m["messageId"]) 
