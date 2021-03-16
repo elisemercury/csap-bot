@@ -251,6 +251,9 @@ def handle_cards(api, incoming_msg):
                 
                     api.messages.delete(messageId=m["messageId"])  
                     text = "Thank you, {} is now a superadmin for the GoCSAP bot.".format(requestor)
+                    
+                    
+                    
                 except:
                     cur.rollback()
                     log(severity=3, infoMsg="Failed to update database of admins: {}.".format(requestor), personId=personId)  
@@ -324,10 +327,31 @@ def handle_cards(api, incoming_msg):
         level = m["inputs"].split(" ")[2]
         api.messages.delete(messageId=m["messageId"]) 
         
-        log(severity=2, infoMsg="Admin access declined: {}.".format(requestor), personId=personId)  
+        # fetch list of all superadmins to send request to
+        cur.execute("""SELECT email FROM admins WHERE role='superadmin';""")
+        superAdminList = cur.fetchall() 
         
+        # send decline info to all superadmins
         text = "The {} request for {} has been successfully declined.".format(level, requestor)
-        return text
+        
+        for element in superAdminList:
+            for email in element:
+                # delete approval request card 
+                roomMsgs = api.messages.list_direct(personEmail=email)
+                for count, msg in enumerate(roomMsgs):
+                    # check last 10 messages
+                    if count < 10:
+                        try:
+                            if requestor in msg.attachments[0]["content"]["body"][0]["columns"][0]["items"][1]["text"]:
+                                api.messages.delete(messageId=msg.id)
+                        except:
+                            continue
+
+                api.messages.create(toPersonEmail=email, 
+                                    markdown=text)
+        
+        log(severity=2, infoMsg="Admin access declined: {}.".format(requestor), personId=personId)  
+        return ""
     
     elif m["inputs"] == "pull_report":
         today_date = date.today().strftime("%d %B %Y")
