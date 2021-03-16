@@ -50,6 +50,6 @@ Superadmin access is reserved for people managing the GoCSAP bot. At least 1 sup
 GoCSAP bot is currently **online** and running on a Heroku server. Feel free to try it out by contacting GoCSAP@webex.bot in the Webex App.
 
 Next steps:
-- [ ] Addition of new card templates: currently only one notification template is supported
+- [ ] Addition of new card templates: currently only two notification templates are supported
 - [ ] Subscribe to specific notification categories: subscribers can choose to be updated on either regional newsletters, events, or all.
 - [ ] more ideas to come soon :fire:
