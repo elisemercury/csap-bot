@@ -443,7 +443,7 @@ def parse_msg(incoming_msg, parse, roomId, review, template, personId):
                 c = create_message_with_attachment(
                     subscriberRoomId, msgtxt=backupmessage, attachment=json.loads(attachment)) 
 
-        log(severity=2, infoMsg="Notification sent without review.", personId=incoming_msg.personId)
+        log(severity=2, infoMsg="Notification sent without review.", personId=personId)
         
         m = get_attachment_actions(incoming_msg["data"]["id"])
         api.messages.delete(messageId=m["messageId"]) 
