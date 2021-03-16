@@ -148,7 +148,7 @@ def handle_cards(api, incoming_msg):
             if element == "" or element == " ":
                 return "Oops, it seems like you didn't fill out all required fields. Please verify your entries and re-submit the notification."
 
-        parse_msg(incoming_msg, parse, roomId, review, template="1")
+        parse_msg(incoming_msg, parse, roomId, review, template="1", personId=personId)
 
         return ""
 
@@ -378,7 +378,7 @@ def handle_cards(api, incoming_msg):
     log(severity=3, personId=personId, infoMsg="Faulty command. Please review: "+str(m["inputs"]))
     return "Sorry, I do not understand the command {} yet.".format(m["inputs"])    
 
-def parse_msg(incoming_msg, parse, roomId, review, template):
+def parse_msg(incoming_msg, parse, roomId, review, template, personId):
     now = datetime.now()
     msg_id = now.strftime("%d%m%Y-%H%M")
     
@@ -403,7 +403,7 @@ def parse_msg(incoming_msg, parse, roomId, review, template):
             c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
                                                attachment=json.loads(approve_card.format(msg_id=msg_id)))  
 
-            log(severity=1, infoMsg="Notification submitted and sent for review.", personId=incoming_msg.personId)
+            log(severity=1, infoMsg="Notification submitted and sent for review.", personId=personId)
                
         elif template == "2":
             attachment = notif_card_2.format(main_title=parse[0], textbox_1=parse[1], 
@@ -418,7 +418,7 @@ def parse_msg(incoming_msg, parse, roomId, review, template):
             c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
                                                attachment=json.loads(approve_card.format(msg_id=msg_id)))  
 
-            log(severity=1, infoMsg="Notification submitted and sent for review.", personId=incoming_msg.personId)
+            log(severity=1, infoMsg="Notification submitted and sent for review.", personId=personId)
         
         ### add new templates here
         
