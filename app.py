@@ -285,7 +285,7 @@ def handle_cards(api, incoming_msg):
             # check if requestor is already an admin, if yes, update records to superadmin
             elif check_permission(email=requestor, level="admin") == "Authorized":
                 try:
-                    cur.execute("""UPDATE admins SET role =  (%s) WHERE email = (%s)""", ("superadmin", requestor)
+                    cur.execute("""UPDATE admins SET role =  (%s) WHERE email = (%s)""", ("superadmin", requestor))
                     log(severity=2, infoMsg="Admin ugraded to superadmin: {}.".format(requestor), personId=personId)
                     text="Your access level for the GoCSAP bot has been changed to **superadmin**! 🎉 \nYou can now type **send notif** to submit notifications, type **analytics** to view GoCSAP bot analytics and receive requests for approving new admins."
                     api.messages.create(toPersonEmail=requestor, 
@@ -697,7 +697,9 @@ def request_admin_access(incoming_msg):
         reqEmail = request[2]
         if valid_email(reqEmail) == "valid":
             if request[1] == "admin":
-                print(reqEmail)
+                if check_permission(email=reqEmail, level="superadmin") == "Authorized":
+                    text = "{} is already a superadmin. Use the *cancel admin* command to revoke admin rights.".format(reqEmail)
+                    return text
                 if check_permission(email=reqEmail) == "Authorized":
                     text = "{} is already an admin. Use the *cancel admin* command to revoke admin rights.".format(reqEmail)
                     return text
@@ -1500,7 +1502,7 @@ request_admin_card = """
                         "body": [
                             {{
                                 "type": "TextBlock",
-                                "text": "You are a superadmin for the CSAP bot, therefore your approval is required when admin/superadmin requests are submitted.",
+                                "text": "You are a superadmin for the GoCSAP bot, therefore your approval is required when admin/superadmin requests are submitted.",
                                 "wrap": true
                             }},
                             {{
@@ -1508,11 +1510,11 @@ request_admin_card = """
                                 "facts": [
                                     {{
                                         "title": "Admin",
-                                        "value": "Can submit notifications through the CSAP bot to all bot subscribers."
+                                        "value": "Can submit notifications through the GoCSAP bot which are sent to all bot subscribers and can request GoCSAP bot analytics."
                                     }},
                                     {{
                                         "title": "Superadmin",
-                                        "value": "Have admin rights, can approve new admins/superadmins and have access to admin/superadmin records."
+                                        "value": "Have admin rights and can approve new admins/superadmins."
                                     }}
                                 ]
                             }}
