@@ -639,7 +639,6 @@ def valid_email(email):
     
 def request_admin_access(incoming_msg):
     request = (incoming_msg.text).split(" ")
-    request = request.split(" ")
 
     if "GoCSAP" in request:
         request.remove("GoCSAP")
