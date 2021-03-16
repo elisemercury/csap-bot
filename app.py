@@ -85,31 +85,31 @@ def handle_cards(api, incoming_msg):
         try:
             cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
             log(severity=0, infoMsg="Subscriber database updated.", personId=personId)
-            # send success message
-            text="Thank you, you successfully subscribed to GoCSAP bot updates. 🥳"
-            api.messages.create(roomId=roomId, text=text)  
             return ""
         except:
             con.rollback()
+            log(severity=3, infoMsg="Failed to update database of subscribers.", personId=personId) 
         finally:
             con.commit()
+            # delete card
             api.messages.delete(messageId=m["messageId"])  
-            return "Thank you, you sucessfully subscribed to GoCSAP bot updates. 🥳"
+            # send success message
+            return "Thank you, you successfully subscribed to GoCSAP bot updates. 🥳"
             
     elif m["inputs"] == "unsubscribe":    
         try:
             cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
             log(severity=0, infoMsg="Subscriber database updated.", personId=personId)
             # send success message
-            text="Thank you, you successfully unsubscribed from GoCSAP bot updates."
-            api.messages.create(roomId=roomId, text=text)    
             return ""
         except:  
             con.rollback()
+            log(severity=3, infoMsg="Failed to update database of subscribers.", personId=personId) 
         finally:
             con.commit() 
             # delete card
             api.messages.delete(messageId=m["messageId"]) 
+            # send success message
             return "Thank you, you successfully unsubscribed from GoCSAP bot updates."
 
     #elif "submit_notif_1" in str(m["inputs"]):
@@ -481,7 +481,7 @@ def subscribe(incoming_msg):
             print("could not be added to db")
         finally:
             con.commit()
-        return "Thank you, you successfully subscribed to CSAP bot updates. 🥳"
+            return "Thank you, you successfully subscribed to CSAP bot updates. 🥳"
     # if it starts with un, then unsubscribe the user
     else:
         try:
@@ -494,7 +494,7 @@ def subscribe(incoming_msg):
             print("Could not be removed from DB")   
         finally:
             con.commit()
-        return "Thank you, you successfully unsubscribed from CSAP bot updates. 😢"  
+            return "Thank you, you successfully unsubscribed from CSAP bot updates. 😢"  
 
 def help(incoming_msg):
     if check_permission(email=incoming_msg.personEmail, level="superadmin") == "Authorized":
