@@ -393,6 +393,18 @@ def parse_msg(incoming_msg, parse, roomId, review, template):
                                         button1_text=parse[6], button2_text=parse[7], button3_text=parse[8], 
                                         button1_url=parse[9], button2_url=parse[10], button3_url=parse[11],
                                         msg_id=parse[12], isVisible=isVisible)   
+            
+            with open('parse.pkl', 'wb') as f:
+                pickle.dump(parse, f)
+            # send card to revie
+            c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
+                                               attachment=json.loads(attachment))                                       
+            # send card for approving
+            c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
+                                               attachment=json.loads(approve_card.format(msg_id=msg_id)))  
+
+            log(severity=1, infoMsg="Notification submitted and sent for review.", personId=personId)
+               
         elif template == "2":
             attachment = notif_card_2.format(main_title=parse[0], textbox_1=parse[1], 
                                            msg_id=parse[2], isVisible=isVisible)          
