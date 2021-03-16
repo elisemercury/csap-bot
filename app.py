@@ -217,7 +217,7 @@ def handle_cards(api, incoming_msg):
                         roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
                     ) 
 
-            log(severity=1, infoMsg="Notification approved and sent.", personId=personId)
+            log(severity=1, infoMsg="Notification approved and sent. Notification Id: {}".format(parse[-3]), personId=personId)
             return ""      
         
         else:
@@ -452,7 +452,7 @@ def parse_msg(incoming_msg, parse, roomId, review, template, personId):
                 c = create_message_with_attachment(
                     subscriberRoomId, msgtxt=backupmessage, attachment=json.loads(attachment)) 
 
-        log(severity=2, infoMsg="Notification sent without review.", personId=personId)
+        log(severity=2, infoMsg="Notification sent without review. Notification Id: {}".format(msg_id), personId=personId)
         
         m = get_attachment_actions(incoming_msg["data"]["id"])
         api.messages.delete(messageId=m["messageId"]) 
