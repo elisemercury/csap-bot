@@ -167,7 +167,7 @@ def handle_cards(api, incoming_msg):
             if element == "" or element == " ":
                 return "Oops, it seems like you didn't fill out all required fields. Please verify your entries and re-submit the notification."
 
-        parse_msg(incoming_msg, parse, roomId, review, template="2")
+        parse_msg(incoming_msg, parse, roomId, review, template="2", personId=personId)
 
         return ""
     
