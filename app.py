@@ -190,15 +190,24 @@ def handle_cards(api, incoming_msg):
             elif parse[-1] == "2":
                 attachment = notif_card_2.format(main_title=parse[0], textbox_1=parse[1], 
                                                  msg_id=parse[2], isVisible="false")
-            backupmessage = "Hi there! 👋 The GoCSAP bot just sent you a card."
+            backupmessage = "Hi there! 👋 The GoCSAP bot just sent you a card."         
             
+            roomMsgs = api.messages.list(roomId=roomId)
+            for count, msg in enumerate(roomMsgs):
+                if count == 0:
+                    delMsg1  = msg.id
+                elif count == 1:
+                    delMsg2  = msg.id
+                else:
+                    break
+                    
+            api.messages.delete(messageId=delMsg1)     
+            api.messages.delete(messageId=delMsg2)    
+            os.remove("parse.pkl")    
             
             text="Notification {} was approved and sent to bot subscribers! 🎉".format(parse[-3])
             api.messages.create(roomId=roomId, 
-                                 text=text)    
-
-            api.messages.delete(messageId=m["messageId"])            
-            os.remove("parse.pkl") 
+                                 text=text)               
             
             cur.execute("""SELECT roomId FROM subscribers;""")
             result = cur.fetchall()
@@ -396,7 +405,7 @@ def parse_msg(incoming_msg, parse, roomId, review, template, personId):
             
             with open('parse.pkl', 'wb') as f:
                 pickle.dump(parse, f)
-            # send card to revie
+            # send card to review
             c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
                                                attachment=json.loads(attachment))                                       
             # send card for approving
@@ -411,7 +420,7 @@ def parse_msg(incoming_msg, parse, roomId, review, template, personId):
 
             with open('parse.pkl', 'wb') as f:
                 pickle.dump(parse, f)
-            # send card to revie
+            # send card to review
             c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
                                                attachment=json.loads(attachment))                                       
             # send card for approving
