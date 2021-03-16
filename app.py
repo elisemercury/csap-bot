@@ -243,7 +243,7 @@ def handle_cards(api, incoming_msg):
             # check if requestor is already a superadmin, if yes, update records to admin
             elif check_permission(email=requestor, level="superadmin") == "Authorized":
                 try:
-                    cur.execute("""UPDATE admins SET role =  (%s) WHERE email = (%s)""", ("admin", requestor)
+                    cur.execute("""UPDATE admins SET role =  (%s) WHERE email = (%s)""", ("admin", requestor))
                     log(severity=2, infoMsg="Superadmin downgraded to admin: {}.".format(requestor), personId=personId)
                     text="Your access level for the GoCSAP bot has been changed to **admin**! \nYou can now type **send notif** to submit notifications and type **analytics** to view GoCSAP bot analytics."
                     api.messages.create(toPersonEmail=requestor, 
