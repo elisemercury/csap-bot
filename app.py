@@ -399,7 +399,7 @@ def handle_cards(api, incoming_msg):
 
                             api.messages.create(toPersonEmail=email, 
                                                 markdown=text)
-                    return text
+                    return ""
 
     elif "decline_admin" in m["inputs"]:
         requestor = m["inputs"].split(" ")[1]
