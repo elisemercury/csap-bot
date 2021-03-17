@@ -225,8 +225,19 @@ def handle_cards(api, incoming_msg):
             return "Oops, you do not have permission to approve the notification!"
 
     elif m["inputs"] == "decline_msg":
-        os.remove("parse.pkl") 
-        api.messages.delete(messageId=m["messageId"]) 
+
+        roomMsgs = api.messages.list(roomId=roomId)
+        for count, msg in enumerate(roomMsgs):
+            if count == 0:
+                delMsg1  = msg.id
+            elif count == 1:
+                delMsg2  = msg.id
+            else:
+                break
+                
+        api.messages.delete(messageId=delMsg1)     
+        api.messages.delete(messageId=delMsg2)    
+        os.remove("parse.pkl")   
         
         log(severity=2, infoMsg="Notification declined and not sent.", personId=personId)   
         
