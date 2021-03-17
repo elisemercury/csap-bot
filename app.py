@@ -110,7 +110,7 @@ def handle_cards(api, incoming_msg):
             # delete card
             api.messages.delete(messageId=m["messageId"]) 
             # send success message
-            return "Thank you, you successfully unsubscribed from GoCSAP bot updates."
+            return "Thank you, you successfully unsubscribed from GoCSAP bot updates. 😢"
 
     elif "{'textbox_1_card_1':" in str(m["inputs"]):    
         log(severity=1, infoMsg="New notification submitted.", personId=personId)
