@@ -247,20 +247,38 @@ def handle_cards(api, incoming_msg):
                     log(severity=2, infoMsg="Superadmin downgraded to admin: {}.".format(requestor), personId=personId)
                     text="Your access level for the GoCSAP bot has been changed to **admin**! \nYou can now type **send notif** to submit notifications and type **analytics** to view GoCSAP bot analytics."
                     api.messages.create(toPersonEmail=requestor, 
-                                        markdown=text)    
-                
-                    api.messages.delete(messageId=m["messageId"])  
-                    text = "Thank you, {} is now a superadmin for the GoCSAP bot.".format(requestor)
-                    
-                    
-                    
+                                        markdown=text)                        
                 except:
                     cur.rollback()
                     log(severity=3, infoMsg="Failed to update database of admins: {}.".format(requestor), personId=personId)  
                     text = ""     
                 finally:
                     con.commit()
-                    return text                              
+                    
+                    # fetch list of all superadmins
+                    cur.execute("""SELECT email FROM admins WHERE role='superadmin';""")
+                    superAdminList = cur.fetchall() 
+
+                    # send approval info to all superadmins
+                    text = "The {} request for {} has been successfully approved.".format(level, requestor)
+                    
+                    for element in superAdminList:
+                        for email in element:
+                            # delete approval request card 
+                            roomMsgs = api.messages.list_direct(personEmail=email)
+                            for count, msg in enumerate(roomMsgs):
+                                # check last 10 messages
+                                if count < 10:
+                                    try:
+                                        if requestor in msg.attachments[0]["content"]["body"][0]["columns"][0]["items"][1]["text"]:
+                                            api.messages.delete(messageId=msg.id)
+                                    except:
+                                        continue
+
+                            api.messages.create(toPersonEmail=email, 
+                                                markdown=text)
+
+                    return ""                             
             # new admin
             else:
                 try:
@@ -269,16 +287,36 @@ def handle_cards(api, incoming_msg):
                     text="Hurray, you are now registered as an **admin** for the GoCSAP bot! 🎉 \nYou can now type **send notif** to submit notifications and type **analytics** to view GoCSAP bot analytics."
                     api.messages.create(toPersonEmail=requestor, 
                                         markdown=text)    
-                
-                    api.messages.delete(messageId=m["messageId"])  
-                    text = "Thank you, {} is now an admin for the GoCSAP bot.".format(requestor)
                 except:
                     cur.rollback()
                     log(severity=3, infoMsg="Failed to update database of admins: {}.".format(requestor), personId=personId)  
                     text = ""
                 finally:
                     con.commit()
-                    return text
+
+                    # fetch list of all superadmins
+                    cur.execute("""SELECT email FROM admins WHERE role='superadmin';""")
+                    superAdminList = cur.fetchall() 
+
+                    # send approval info to all superadmins
+                    text = "The {} request for {} has been successfully approved.".format(level, requestor)
+                    
+                    for element in superAdminList:
+                        for email in element:
+                            # delete approval request card 
+                            roomMsgs = api.messages.list_direct(personEmail=email)
+                            for count, msg in enumerate(roomMsgs):
+                                # check last 10 messages
+                                if count < 10:
+                                    try:
+                                        if requestor in msg.attachments[0]["content"]["body"][0]["columns"][0]["items"][1]["text"]:
+                                            api.messages.delete(messageId=msg.id)
+                                    except:
+                                        continue
+
+                            api.messages.create(toPersonEmail=email, 
+                                                markdown=text)
+                    return ""
             
         if level == "superadmin":
             if check_permission(email=requestor, level="superadmin") == "Authorized":
@@ -293,16 +331,37 @@ def handle_cards(api, incoming_msg):
                     text="Your access level for the GoCSAP bot has been changed to **superadmin**! 🎉 \nYou can now type **send notif** to submit notifications, type **analytics** to view GoCSAP bot analytics and receive requests for approving new admins."
                     api.messages.create(toPersonEmail=requestor, 
                                         markdown=text)    
-                
-                    api.messages.delete(messageId=m["messageId"])  
-                    text = "Thank you, {} is now a superadmin for the GoCSAP bot.".format(requestor)
                 except:
                     cur.rollback()
                     log(severity=3, infoMsg="Failed to update database of admins: {}.".format(requestor), personId=personId)  
                     text = ""     
                 finally:
                     con.commit()
-                    return text   
+
+                    # fetch list of all superadmins
+                    cur.execute("""SELECT email FROM admins WHERE role='superadmin';""")
+                    superAdminList = cur.fetchall() 
+
+                    # send approval info to all superadmins
+                    text = "The {} request for {} has been successfully approved.".format(level, requestor)
+                    
+                    for element in superAdminList:
+                        for email in element:
+                            # delete approval request card 
+                            roomMsgs = api.messages.list_direct(personEmail=email)
+                            for count, msg in enumerate(roomMsgs):
+                                # check last 10 messages
+                                if count < 10:
+                                    try:
+                                        if requestor in msg.attachments[0]["content"]["body"][0]["columns"][0]["items"][1]["text"]:
+                                            api.messages.delete(messageId=msg.id)
+                                    except:
+                                        continue
+
+                            api.messages.create(toPersonEmail=email, 
+                                                markdown=text)
+
+                    return ""   
             # new superadmin           
             else:
                 try:
@@ -311,15 +370,35 @@ def handle_cards(api, incoming_msg):
                     text="Hurray, you are now registered as a **superadmin** for the GoCSAP bot! 🎉 \nYou can now type **send notif** to submit notifications, type **analytics** to view GoCSAP bot analytics and receive requests for approving new admins."
                     api.messages.create(toPersonEmail=requestor, 
                                      markdown=text)    
-                
-                    api.messages.delete(messageId=m["messageId"])  
-                    text = "Thank you, {} is now a superadmin for the GoCSAP bot.".format(requestor)
                 except:
                     cur.rollback()
                     log(severity=3, infoMsg="Failed to update database of admins: {}.".format(requestor), personId=personId)
                     text = ""
                 finally:
                     con.commit()
+
+                    # fetch list of all superadmins
+                    cur.execute("""SELECT email FROM admins WHERE role='superadmin';""")
+                    superAdminList = cur.fetchall() 
+
+                    # send approval info to all superadmins
+                    text = "The {} request for {} has been successfully approved.".format(level, requestor)
+                    
+                    for element in superAdminList:
+                        for email in element:
+                            # delete approval request card 
+                            roomMsgs = api.messages.list_direct(personEmail=email)
+                            for count, msg in enumerate(roomMsgs):
+                                # check last 10 messages
+                                if count < 10:
+                                    try:
+                                        if requestor in msg.attachments[0]["content"]["body"][0]["columns"][0]["items"][1]["text"]:
+                                            api.messages.delete(messageId=msg.id)
+                                    except:
+                                        continue
+
+                            api.messages.create(toPersonEmail=email, 
+                                                markdown=text)
                     return text
 
     elif "decline_admin" in m["inputs"]:
