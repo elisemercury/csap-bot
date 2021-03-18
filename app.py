@@ -120,8 +120,14 @@ def handle_cards(api, incoming_msg):
         small_title = m["inputs"]["small_title"]
         main_title = m["inputs"]["main_title"]
         textbox_1 = m["inputs"]["textbox_1_card_1"]
+        textbox_1 = textbox_1.replace("\n", "\\r\\n")
+
         textbox_2 = m["inputs"]["textbox_2"]
+        textbox_2 = textbox_1.replace("\n", "\\r\\n")
+
         textbox_3 = m["inputs"]["textbox_3"]
+        textbox_3 = textbox_1.replace("\n", "\\r\\n")
+
         button1_text = m["inputs"]["button1_text"]
         button2_text = m["inputs"]["button2_text"]
         button3_text = m["inputs"]["button3_text"]
@@ -158,6 +164,8 @@ def handle_cards(api, incoming_msg):
         parse = []
         main_title = m["inputs"]["main_title"]
         textbox_1 = m["inputs"]["textbox_1_card_2"]
+        textbox_1 = textbox_1.replace("\n", "\\r\\n")
+        
         review = m["inputs"]["review"]   
 
         parse.extend([main_title, textbox_1])
@@ -1722,20 +1730,38 @@ notif_card_1 = """
             ]
         }},
         {{
-            "type": "TextBlock",
-            "text": "{textbox_1}",
-            "wrap": true
+            "type": "RichTextBlock",
+            "inlines": [
+                {
+                    "type": "TextRun",
+                    "text": "{textbox_1}",
+                    "spacing": "ExtraLarge",
+                    "wrap": true
+                }
+            ]
         }},
         {{
-            "type": "TextBlock",
-            "text": "{textbox_2}",
-            "spacing": "ExtraLarge"
+            "type": "RichTextBlock",
+            "inlines": [
+                {
+                    "type": "TextRun",
+                    "text": "{textbox_2}",
+                    "spacing": "ExtraLarge",
+                    "wrap": true
+
+                }
+            ]
         }},
         {{
-            "type": "TextBlock",
-            "text": "{textbox_3}",
-            "spacing": "Padding",
-            "wrap": true
+            "type": "RichTextBlock",
+            "inlines": [
+                {
+                    "type": "TextRun",
+                    "text": "{textbox_3}",
+                    "spacing": "Padding",
+                    "wrap": true
+                }
+            ]
         }},
         {{
         "type": "ActionSet",
@@ -1803,11 +1829,6 @@ notif_card_2 = """
                                     "color": "Light",
                                     "size": "Large",
                                     "spacing": "Small"
-                                }},
-                                {{
-                                    "type": "TextBlock",
-                                    "text": "{textbox_1}",
-                                    "wrap": true
                                 }}
                             ]
                         }}
@@ -1817,6 +1838,16 @@ notif_card_2 = """
                 }}
             ]
         }},
+        {{
+            "type": "RichTextBlock",
+            "inlines": [
+                {
+                    "type": "TextRun",
+                    "text": "{textbox_1}",
+                    "wrap": true
+                }
+            ]
+        }}
         {{
             "type": "Column",
             "width": "auto",
