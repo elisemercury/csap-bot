@@ -554,8 +554,8 @@ def parse_msg(incoming_msg, parse, roomId, review, template, personId):
         if template == "1":
             attachment = notif_card_1.format(image_url=parse[0], small_title=parse[1], main_title=parse[2], 
                                         textbox_1=parse[3], textbox_2=parse[4], textbox_3=parse[5], 
-                                        button1_text=parse[6], button2_text=parse[7], button3_text=parse[8], 
-                                        button1_url=parse[9], button2_url=parse[10], button3_url=parse[11],
+                                        button1_text=parse[6], button2_text=parse[7], 
+                                        button1_url=parse[9], button2_url=parse[10],
                                         msg_id=parse[12], isVisible=isVisible)   
             
             with open('parse.pkl', 'wb') as f:
@@ -591,8 +591,8 @@ def parse_msg(incoming_msg, parse, roomId, review, template, personId):
         if template == "1":
             attachment = notif_card_1.format(image_url=parse[0], small_title=parse[1], main_title=parse[2], 
                                         textbox_1=parse[3], textbox_2=parse[4], textbox_3=parse[5], 
-                                        button1_text=parse[6], button2_text=parse[7], button3_text=parse[8], 
-                                        button1_url=parse[9], button2_url=parse[10], button3_url=parse[11],
+                                        button1_text=parse[6], button2_text=parse[7], 
+                                        button1_url=parse[9], button2_url=parse[10],
                                         msg_id=parse[12], isVisible=isVisible)   
         elif template == "2":
             attachment = notif_card_2.format(main_title=parse[0], textbox_1=parse[1], 
