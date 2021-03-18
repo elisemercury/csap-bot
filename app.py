@@ -241,7 +241,7 @@ def handle_cards(api, incoming_msg):
         
         log(severity=2, infoMsg="Notification declined and not sent.", personId=personId)   
         
-        return "Notification declined an not sent 😞"
+        return "Notification declined and not sent 😞"
     
     elif "approve_admin" in m["inputs"]:
         requestor = m["inputs"].split(" ")[1]
@@ -1042,15 +1042,15 @@ def joke(incoming_msg):
     punchline = result["punchline"]
 
     text = "Ha, so you want to hear a joke? 😃"
-    api.messages.create(toPersonId=incoming_msg.personId, 
+    api.messages.create(roomId=incoming_msg.roomId, 
                         text=text) 
     time.sleep(1.5)
     text = "{}".format(setup)
-    api.messages.create(toPersonId=incoming_msg.personId, 
+    api.messages.create(roomId=incoming_msg.roomId, 
                         text=text)  
     time.sleep(3)
     text = "{}".format(punchline)    
-    api.messages.create(toPersonId=incoming_msg.personId, 
+    api.messages.create(roomId=incoming_msg.roomId, 
                         text=text)
     time.sleep(1)
     return "😂"
