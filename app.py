@@ -120,13 +120,13 @@ def handle_cards(api, incoming_msg):
         small_title = m["inputs"]["small_title"]
         main_title = m["inputs"]["main_title"]
         textbox_1 = m["inputs"]["textbox_1_card_1"]
-        textbox_1 = textbox_1.replace("\n", "\\r\\n")
+        textbox_1 = textbox_1.replace("\n", "\\r\\n").replace('"', '“')
 
         textbox_2 = m["inputs"]["textbox_2"]
-        textbox_2 = textbox_1.replace("\n", "\\r\\n")
+        textbox_2 = textbox_2.replace("\n", "\\r\\n").replace('"', '“')
 
         textbox_3 = m["inputs"]["textbox_3"]
-        textbox_3 = textbox_1.replace("\n", "\\r\\n")
+        textbox_3 = textbox_3.replace("\n", "\\r\\n").replace('"', '“')
 
         button1_text = m["inputs"]["button1_text"]
         button2_text = m["inputs"]["button2_text"]
@@ -164,7 +164,7 @@ def handle_cards(api, incoming_msg):
         parse = []
         main_title = m["inputs"]["main_title"]
         textbox_1 = m["inputs"]["textbox_1_card_2"]
-        textbox_1 = textbox_1.replace("\n", "\\r\\n")
+        textbox_1 = textbox_1.replace("\n", "\\r\\n").replace('"', '“')
         
         review = m["inputs"]["review"]   
 
@@ -1841,13 +1841,12 @@ notif_card_2 = """
         {{
             "type": "RichTextBlock",
             "inlines": [
-                {
+                {{
                     "type": "TextRun",
-                    "text": "{textbox_1}",
-                    "wrap": true
-                }
+                    "text": "{textbox_1}"
+                }}
             ]
-        }}
+        }},
         {{
             "type": "Column",
             "width": "auto",
@@ -2260,6 +2259,7 @@ send_notif_template_1 = """
                                 {
                                     "type": "Input.Text",
                                     "placeholder": "Text box 2",
+                                    "isMultiline": true,
                                     "id": "textbox_2",
                                     "spacing": "Small"
                                 },
