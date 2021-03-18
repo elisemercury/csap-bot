@@ -130,10 +130,10 @@ def handle_cards(api, incoming_msg):
 
         button1_text = m["inputs"]["button1_text"]
         button2_text = m["inputs"]["button2_text"]
-        button3_text = m["inputs"]["button3_text"]
+        # button3_text = m["inputs"]["button3_text"]
         button1_url = m["inputs"]["button1_url"]
         button2_url = m["inputs"]["button2_url"]
-        button3_url = m["inputs"]["button3_url"]   
+        # button3_url = m["inputs"]["button3_url"]   
         review = m["inputs"]["review"]   
 
         # correct URL is invalid
@@ -143,11 +143,11 @@ def handle_cards(api, incoming_msg):
             button1_url = "https://" + button1_url
         if "https" not in button2_url:
             button2_url = "https://" + button2_url
-        if "https" not in button3_url:
-            button3_url = "https://" + button3_url
+        # if "https" not in button3_url:
+        #     button3_url = "https://" + button3_url
 
         parse.extend([image_url, small_title, main_title, textbox_1, textbox_2, textbox_3, button1_text, button2_text,
-                    button3_text, button1_url, button2_url, button3_url])
+                     button1_url, button2_url])
         
         for element in parse:
             if element == "" or element == " ":
@@ -191,8 +191,8 @@ def handle_cards(api, incoming_msg):
             if parse[-1] == "1":
                 attachment = notif_card_1.format(image_url=parse[0], small_title=parse[1], main_title=parse[2], 
                                           textbox_1=parse[3], textbox_2=parse[4], textbox_3=parse[5], 
-                                          button1_text=parse[6], button2_text=parse[7], button3_text=parse[8], 
-                                          button1_url=parse[9], button2_url=parse[10], button3_url=parse[11],
+                                          button1_text=parse[6], button2_text=parse[7], 
+                                          button1_url=parse[9], button2_url=parse[10],
                                           msg_id=parse[12], isVisible="false")
             elif parse[-1] == "2":
                 attachment = notif_card_2.format(main_title=parse[0], textbox_1=parse[1], 
@@ -1757,11 +1757,6 @@ notif_card_1 = """
                          "title": "{button2_text}",
                          "url": "{button2_url}",
                          "horizontalAlignment": "Left"
-                        }},
-                {{"type": "Action.OpenUrl",
-                         "title": "{button3_text}",
-                         "url": "{button3_url}",
-                         "horizontalAlignment": "Left"
                         }}
                         ],
                 "horizontalAlignment": "Left",
@@ -2273,17 +2268,6 @@ send_notif_template_1 = """
                                                     "id": "button2_text"
                                                 }
                                             ]
-                                        },
-                                        {
-                                            "type": "Column",
-                                            "width": "stretch",
-                                            "items": [
-                                                {
-                                                    "type": "Input.Text",
-                                                    "placeholder": "Button 3 text",
-                                                    "id": "button3_text"
-                                                }
-                                            ]
                                         }
                                     ],
                                     "spacing": "Small"
@@ -2326,17 +2310,6 @@ send_notif_template_1 = """
                                             "type": "Input.Text",
                                             "placeholder": "Button URL",
                                             "id": "button2_url"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "type": "Column",
-                                    "width": "stretch",
-                                    "items": [
-                                        {
-                                            "type": "Input.Text",
-                                            "placeholder": "Button URL",
-                                            "id": "button3_url"
                                         }
                                     ]
                                 }
