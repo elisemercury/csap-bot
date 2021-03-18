@@ -1737,7 +1737,8 @@ notif_card_1 = """
         {{
             "type": "TextBlock",
             "text": "{textbox_2}",
-            "spacing": "ExtraLarge"
+            "spacing": "ExtraLarge",
+            "wrap": true
         }},
         {{
             "type": "TextBlock",
