@@ -1730,38 +1730,21 @@ notif_card_1 = """
             ]
         }},
         {{
-            "type": "RichTextBlock",
-            "inlines": [
-                {
-                    "type": "TextRun",
-                    "text": "{textbox_1}",
-                    "spacing": "ExtraLarge",
-                    "wrap": true
-                }
-            ]
+            "type": "TextBlock",
+            "text": "{textbox_1}",
+            "wrap": true
         }},
         {{
-            "type": "RichTextBlock",
-            "inlines": [
-                {
-                    "type": "TextRun",
-                    "text": "{textbox_2}",
-                    "spacing": "ExtraLarge",
-                    "wrap": true
-
-                }
-            ]
+            "type": "TextBlock",
+            "text": "{textbox_2}",
+            "spacing": "ExtraLarge",
+            "wrap": true
         }},
         {{
-            "type": "RichTextBlock",
-            "inlines": [
-                {
-                    "type": "TextRun",
-                    "text": "{textbox_3}",
-                    "spacing": "Padding",
-                    "wrap": true
-                }
-            ]
+            "type": "TextBlock",
+            "text": "{textbox_3}",
+            "spacing": "Padding",
+            "wrap": true
         }},
         {{
         "type": "ActionSet",
@@ -1829,21 +1812,17 @@ notif_card_2 = """
                                     "color": "Light",
                                     "size": "Large",
                                     "spacing": "Small"
+                                }},
+                                {{
+                                    "type": "TextBlock",
+                                    "text": "{textbox_1}",
+                                    "wrap": true
                                 }}
                             ]
                         }}
                     ],
                     "spacing": "None",
                     "bleed": true
-                }}
-            ]
-        }},
-        {{
-            "type": "RichTextBlock",
-            "inlines": [
-                {{
-                    "type": "TextRun",
-                    "text": "{textbox_1}"
                 }}
             ]
         }},
