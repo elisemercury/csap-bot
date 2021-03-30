@@ -1095,9 +1095,13 @@ if __name__ == "__main__":
     for webhook in api.webhooks.list():
         webhook_list.append(webhook.id)
 
-    for webhook in api.webhooks.list():
-        if webhook.id != webhook_list[-2] and webhook.id != webhook_list[-1]:
-            api.webhooks.delete(webhook.id)
+    if len(webhook_list) > 2:
+        for webhook in api.webhooks.list():
+        api.webhooks.delete(webhook.id)
+
+    # for webhook in api.webhooks.list():
+    #     if webhook.id != webhook_list[-2] and webhook.id != webhook_list[-1]:
+    #         api.webhooks.delete(webhook.id)
 
     # Run Bot
     bot.run()
