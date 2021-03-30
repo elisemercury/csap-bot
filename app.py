@@ -1097,7 +1097,7 @@ if __name__ == "__main__":
 
     if len(webhook_list) > 2:
         for webhook in api.webhooks.list():
-        api.webhooks.delete(webhook.id)
+            api.webhooks.delete(webhook.id)
 
     # for webhook in api.webhooks.list():
     #     if webhook.id != webhook_list[-2] and webhook.id != webhook_list[-1]:
