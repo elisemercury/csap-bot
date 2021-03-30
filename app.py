@@ -1,6 +1,6 @@
 from webexteamssdk import WebexTeamsAPI
 import webexteamssdk
-from webexteamsbot import TeamsBot
+from webexteamsbot.webexteamsbot import TeamsBot
 import json
 import requests
 import os
