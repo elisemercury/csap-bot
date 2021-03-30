@@ -606,7 +606,9 @@ def parse_msg(incoming_msg, parse, roomId, review, template, personId):
             log(severity=1, infoMsg="Notification submitted and sent for review.", personId=personId)
 
         elif template == "own":
-            attachment = parse[0]        
+            attachment = parse[0] 
+            attachment = '{"contentType": "application/vnd.microsoft.card.adaptive","content":' + attachment
+            attachment = attachment + "}"       
 
             with open('parse.pkl', 'wb') as f:
                 pickle.dump(parse, f)
@@ -634,7 +636,9 @@ def parse_msg(incoming_msg, parse, roomId, review, template, personId):
                                            msg_id=parse[2], isVisible=isVisible)  
 
         elif template == "own":
-            attachment = parse[0]  
+            attachment = parse[0]
+            attachment = '{"contentType": "application/vnd.microsoft.card.adaptive","content":' + attachment
+            attachment = attachment + "}"  
            
         ### add new templates here
             
