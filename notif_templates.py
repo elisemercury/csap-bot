@@ -1,4 +1,4 @@
-# final notification which will be sent
+# (default) card with 3 image, 2 titles, 3 textboxes, 2 buttons
 notif_card_1 = """
     {{
       "contentType": "application/vnd.microsoft.card.adaptive",
@@ -108,7 +108,7 @@ notif_card_1 = """
     }}
   """ #.format(test="ALOHA")
 
-# final notification which will be sent
+# card with 1 title, 1 textbox
 notif_card_2 = """
     {{
       "contentType": "application/vnd.microsoft.card.adaptive",
@@ -172,7 +172,7 @@ notif_card_2 = """
     }}
   """
 
-# default card template to be filled out
+# to be filled out - (default) card with 3 image, 2 titles, 3 textboxes, 2 buttons
 send_notif_template_1 = """
     {
       "contentType": "application/vnd.microsoft.card.adaptive",
@@ -379,7 +379,7 @@ send_notif_template_1 = """
     }
   """
 
-# send simple message to be filled out
+# to be filled out - card with 1 title, 1 textbox
 send_notif_template_2 = """
     {
       "contentType": "application/vnd.microsoft.card.adaptive",
@@ -445,6 +445,90 @@ send_notif_template_2 = """
                                     "type": "Action.Submit",
                                     "title": "Submit Notification",
                                     "id": "submit_notif_2"
+                                }
+                            ],
+                            "horizontalAlignment": "Center",
+                            "spacing": "None"
+                        }
+                    ]
+                }
+            ],
+            "separator": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "If **review before sending** is checked, the notification will first be sent to you for review before it is sent to all subscribers.",
+            "wrap": true,
+            "color": "Light"
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.2"
+}
+    }
+  """
+
+# to be filled out with a personalized card - card with 1 textbox
+# can be created on: https://developer.webex.com/buttons-and-cards-designer
+send_notif_template_own = """
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "content": {
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "Input.Text",
+                                    "placeholder": "Webex Card Content",
+                                    "isMultiline": true,
+                                    "id": "textbox_1_card_own"
+                                }
+                            ]
+                        }
+                    ],
+                    "spacing": "None",
+                    "bleed": true
+                }
+            ],
+            "bleed": true
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "Input.Toggle",
+                            "title": "Review before sending",
+                            "value": "true",
+                            "wrap": false,
+                            "id": "review",
+                            "spacing": "None"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.Submit",
+                                    "title": "Submit Notification",
+                                    "id": "submit_notif_perso"
                                 }
                             ],
                             "horizontalAlignment": "Center",
