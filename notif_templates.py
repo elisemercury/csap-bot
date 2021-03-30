@@ -488,7 +488,7 @@ send_notif_template_own = """
                             "items": [
                                 {
                                     "type": "Input.Text",
-                                    "placeholder": "Text box 1",
+                                    "placeholder": "Webex Card Content",
                                     "isMultiline": true,
                                     "id": "textbox_1_card_own"
                                 }
