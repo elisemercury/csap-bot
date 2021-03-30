@@ -221,6 +221,8 @@ def handle_cards(api, incoming_msg):
 
             elif parse[-1] == "own":
                 attachment = parse[0]
+                attachment = '{"contentType": "application/vnd.microsoft.card.adaptive","content":' + attachment
+                attachment = attachment + "}" 
 
             backupmessage = "Hi there! 👋 The GoCSAP bot just sent you a card."         
             
