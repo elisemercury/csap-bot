@@ -179,6 +179,25 @@ def handle_cards(api, incoming_msg):
         parse_msg(incoming_msg, parse, roomId, review, template="2", personId=personId)
 
         return ""
+
+    elif "{'textbox_1_card_own':" in str(m["inputs"]):
+        
+        log(severity=1, infoMsg="New notification submitted.", personId=personId)
+        
+        parse = []
+        textbox_1 = m["inputs"]["textbox_1_card_own"]
+        
+        review = m["inputs"]["review"]   
+
+        parse.extend([textbox_1])
+        
+        for element in parse:
+            if element == "" or element == " ":
+                return "Oops, it seems like you didn't fill out all required fields. Please verify your entries and re-submit the notification."
+
+        parse_msg(incoming_msg, parse, roomId, review, template="own", personId=personId)
+
+        return ""
     
     ### add new template here
 
@@ -585,6 +604,20 @@ def parse_msg(incoming_msg, parse, roomId, review, template, personId):
                                                attachment=json.loads(approve_card.format(msg_id=msg_id)))  
 
             log(severity=1, infoMsg="Notification submitted and sent for review.", personId=personId)
+
+        elif template == "own":
+            attachment = parse[0]        
+
+            with open('parse.pkl', 'wb') as f:
+                pickle.dump(parse, f)
+            # send card to review
+            c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
+                                               attachment=json.loads(attachment))                                       
+            # send card for approving
+            c = create_message_with_attachment(roomId, msgtxt=backupmessage, 
+                                               attachment=json.loads(approve_card.format(msg_id=msg_id)))  
+
+            log(severity=1, infoMsg="Notification submitted and sent for review.", personId=personId)            
         
         ### add new templates here
         
@@ -599,7 +632,10 @@ def parse_msg(incoming_msg, parse, roomId, review, template, personId):
         elif template == "2":
             attachment = notif_card_2.format(main_title=parse[0], textbox_1=parse[1], 
                                            msg_id=parse[2], isVisible=isVisible)  
-            
+
+        elif template == "own":
+            attachment = parse[0]  
+           
         ### add new templates here
             
         cur.execute("""SELECT roomId FROM subscribers;""")
@@ -728,6 +764,8 @@ def send_notif(incoming_msg):
                 template = send_notif_template_1
             elif request[2] == "2":
                 template = send_notif_template_2
+            elif request[2] == "own":
+                template = send_notif_template_own
             ### add new templates here
             else:
                 text = "Oops, I do not support template {} yet. I currently support {} templates. Please adjust your choice to one of these.".format(request[2], "2")
