@@ -490,7 +490,7 @@ send_notif_template_own = """
                                     "type": "Input.Text",
                                     "placeholder": "Text box 1",
                                     "isMultiline": true,
-                                    "id": "textbox_1_card_perso"
+                                    "id": "textbox_1_card_own"
                                 }
                             ]
                         }
