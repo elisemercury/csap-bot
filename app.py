@@ -218,6 +218,10 @@ def handle_cards(api, incoming_msg):
             elif parse[-1] == "2":
                 attachment = notif_card_2.format(main_title=parse[0], textbox_1=parse[1], 
                                                  msg_id=parse[2], isVisible="false")
+
+            elif parse[-1] == "own":
+                attachment = parse[0]
+
             backupmessage = "Hi there! 👋 The GoCSAP bot just sent you a card."         
             
             roomMsgs = api.messages.list(roomId=roomId)
