@@ -71,6 +71,9 @@ def greeting(incoming_msg):
     reqEmail = incoming_msg.personEmail
     print(reqEmail + ": " + check_permission(email=reqEmail))
 
+    api.messages.create(roomId=incoming_msg.roomId, 
+            text="⚠️ The bot is currently is maintenance mode. Please do not use it. Contact elandman@cisco.com for more info.") 
+
     c = create_message_with_attachment(
         incoming_msg.roomId, msgtxt=backupmessage, attachment=json.loads(attachment)
     )
@@ -85,12 +88,12 @@ def handle_cards(api, incoming_msg):
 
     if m["inputs"] == "subscribe":
         try:
-            cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
+            cur.execute("""INSERT INTO testing (roomid) VALUES (%s)""", (db_entry,))
             log(severity=0, infoMsg="Subscriber database updated.", personId=personId)
             return ""
         except:
             con.rollback()
-            log(severity=3, infoMsg="Failed to update database of subscribers.", personId=personId) 
+            log(severity=3, infoMsg="Failed to update database of testers.", personId=personId) 
         finally:
             con.commit()
             # delete card
@@ -100,13 +103,13 @@ def handle_cards(api, incoming_msg):
             
     elif m["inputs"] == "unsubscribe":    
         try:
-            cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
-            log(severity=0, infoMsg="Subscriber database updated.", personId=personId)
+            cur.execute("""DELETE FROM testing WHERE roomid = (%s)""", (db_entry,))
+            log(severity=0, infoMsg="Tester database updated.", personId=personId)
             # send success message
             return ""
         except:  
             con.rollback()
-            log(severity=3, infoMsg="Failed to update database of subscribers.", personId=personId) 
+            log(severity=3, infoMsg="Failed to update database of testers.", personId=personId) 
         finally:
             con.commit() 
             # delete card
@@ -239,11 +242,11 @@ def handle_cards(api, incoming_msg):
             api.messages.delete(messageId=delMsg2)    
             os.remove("parse.pkl")    
             
-            text="Notification {} was approved and sent to bot subscribers! 🎉".format(parse[-3])
+            text="Notification {} was approved and sent to bot testers! 🎉".format(parse[-3])
             api.messages.create(roomId=roomId, 
                                  text=text)               
             
-            cur.execute("""SELECT roomId FROM subscribers;""")
+            cur.execute("""SELECT roomId FROM testing;""")
             result = cur.fetchall()
             for element in result:
                 for roomId in element:
@@ -481,7 +484,7 @@ def handle_cards(api, incoming_msg):
     elif m["inputs"] == "pull_report":
         today_date = date.today().strftime("%d %B %Y")
         # nr subscribers
-        cur.execute("""SELECT COUNT (*) FROM subscribers;""")
+        cur.execute("""SELECT COUNT (*) FROM testing;""")
         nr_subscribers = cur.fetchall()[0][0]
         # nr admins
         cur.execute("""SELECT COUNT (*) FROM admins WHERE role='admin';""")
@@ -648,7 +651,7 @@ def parse_msg(incoming_msg, parse, roomId, review, template, personId):
            
         ### add new templates here
             
-        cur.execute("""SELECT roomId FROM subscribers;""")
+        cur.execute("""SELECT roomId FROM testing;""")
         result = cur.fetchall()
         for element in result:
             for subscriberRoomId in element:
@@ -659,7 +662,7 @@ def parse_msg(incoming_msg, parse, roomId, review, template, personId):
         
         m = get_attachment_actions(incoming_msg["data"]["id"])
         api.messages.delete(messageId=m["messageId"]) 
-        text = "Notification {} was sent to bot subscribers! 🎉".format(msg_id)
+        text = "Notification {} was sent to bot testers! 🎉".format(msg_id)
         api.messages.create(roomId, text=text)  
 
 def create_message_with_attachment(rid, msgtxt, attachment, toPersonEmail=""):
@@ -687,6 +690,10 @@ def get_attachment_actions(attachmentid):
     return response.json()
 
 def subscribe(incoming_msg):
+
+    api.messages.create(roomId=incoming_msg.roomId, 
+                text="⚠️ The bot is currently is maintenance mode. Please do not use it. Contact elandman@cisco.com for more info.") 
+
     fetch_infos(incoming_msg)
     db_entry = roomId
     
@@ -696,12 +703,12 @@ def subscribe(incoming_msg):
     # if the command doesnt start with un, subscribe the user
     if request[0][0:2] != "un":
         try:
-            cur.execute("""INSERT INTO subscribers (roomid) VALUES (%s)""", (db_entry,))
-            log(severity=0, infoMsg="Subscriber database updated.", personEmail=incoming_msg.personEmail)
+            cur.execute("""INSERT INTO testing (roomid) VALUES (%s)""", (db_entry,))
+            log(severity=0, infoMsg="Tester database updated.", personEmail=incoming_msg.personEmail)
             print("Added tp DB")
         except:
             con.rollback()
-            log(severity=3, infoMsg="Failed to update database of subscribers.", personId=personId)  
+            log(severity=3, infoMsg="Failed to update database of testers.", personId=personId)  
             print("could not be added to db")
         finally:
             con.commit()
@@ -709,18 +716,22 @@ def subscribe(incoming_msg):
     # if it starts with un, then unsubscribe the user
     else:
         try:
-            cur.execute("""DELETE FROM subscribers WHERE roomid = (%s)""", (db_entry,))
-            log(severity=0, infoMsg="Subscriber database updated.", personEmail=incoming_msg.personEmail) 
+            cur.execute("""DELETE FROM testing WHERE roomid = (%s)""", (db_entry,))
+            log(severity=0, infoMsg="Tester database updated.", personEmail=incoming_msg.personEmail) 
             print("Removed from DB")
         except:
             con.rollback()
-            log(severity=3, infoMsg="Failed to update database of subscribers.", personId=personId)
+            log(severity=3, infoMsg="Failed to update database of testers.", personId=personId)
             print("Could not be removed from DB")   
         finally:
             con.commit()
             return "Thank you, you successfully unsubscribed from CSAP bot updates. 😢"  
 
 def help(incoming_msg):
+
+    api.messages.create(roomId=incoming_msg.roomId, 
+                text="⚠️ The bot is currently is maintenance mode. Please do not use it. Contact elandman@cisco.com for more info.") 
+
     if check_permission(email=incoming_msg.personEmail, level="superadmin") == "Authorized":
         admin_info = "As superadmin you can send notifications to bot subscribers, view bot analytics and grant/revoke admin access."
         attachment = help_card_admin.format(level="superadmin", adminInfo=admin_info)
@@ -748,6 +759,10 @@ def help(incoming_msg):
     return ""
 
 def contact(incoming_msg):
+
+    api.messages.create(roomId=incoming_msg.roomId, 
+                text="⚠️ The bot is currently is maintenance mode. Please do not use it. Contact elandman@cisco.com for more info.") 
+
     fetch_infos(incoming_msg)
     return "Thank you {} for using the GoCSAP bot! \n Current version is v1.0. \n Please contact elandman@cisco.com for more information or for feedback and improvement suggestions.".format(firstName)
 
@@ -763,6 +778,10 @@ def fetch_infos(incoming_msg):
     return sender, firstName, room, roomId, email, personId
 
 def send_notif(incoming_msg):
+
+    api.messages.create(roomId=incoming_msg.roomId, 
+                text="⚠️ The bot is currently is maintenance mode. Please do not use it. Contact elandman@cisco.com for more info.") 
+
     if check_permission(email=incoming_msg.personEmail) == "Authorized":
         request = (incoming_msg.text).split(" ")
         
@@ -859,6 +878,10 @@ def valid_email(email):
         return "invalid" 
     
 def request_admin_access(incoming_msg):
+
+    api.messages.create(roomId=incoming_msg.roomId, 
+                text="⚠️ The bot is currently is maintenance mode. Please do not use it. Contact elandman@cisco.com for more info.") 
+
     request = (incoming_msg.text).split(" ")
 
     if "GoCSAP" in request:
@@ -999,6 +1022,10 @@ def request_admin_access(incoming_msg):
             return text
 
 def cancel_admin_access(incoming_msg):
+
+    api.messages.create(roomId=incoming_msg.roomId, 
+                text="⚠️ The bot is currently is maintenance mode. Please do not use it. Contact elandman@cisco.com for more info.") 
+
     request = (incoming_msg.text).split(" ")
     
     if "GoCSAP" in request:
@@ -1060,12 +1087,16 @@ def cancel_admin_access(incoming_msg):
             return text            
 
 def admin_analytics(incoming_msg):
+
+    api.messages.create(roomId=incoming_msg.roomId, 
+                text="⚠️ The bot is currently is maintenance mode. Please do not use it. Contact elandman@cisco.com for more info.") 
+
     reqEmail = incoming_msg.personEmail
     if check_permission(email=reqEmail) == "Authorized":
         
         today_date = date.today().strftime("%d %B %Y")
         # nr subscribers
-        cur.execute("""SELECT COUNT (*) FROM subscribers;""")
+        cur.execute("""SELECT COUNT (*) FROM testing;""")
         nr_subscribers = cur.fetchall()[0][0]
         # nr admins
         cur.execute("""SELECT COUNT (*) FROM admins WHERE role='admin';""")
@@ -1114,6 +1145,10 @@ def joke(incoming_msg):
     return "😂"
 
 def logfile(incoming_msg):
+
+    api.messages.create(roomId=incoming_msg.roomId, 
+                text="⚠️ The bot is currently is maintenance mode. Please do not use it. Contact elandman@cisco.com for more info.") 
+
     reqEmail = incoming_msg.personEmail
     if check_permission(email=reqEmail, level="superadmin") == "Authorized":  
         log(severity=1, infoMsg="Logfile requested.", personEmail=reqEmail)
